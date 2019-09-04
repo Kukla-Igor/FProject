@@ -16,20 +16,20 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public User save(HttpServletRequest req) {
-        return (User) userDAO.save(req);
+    public User save(User user) {
+        return (User) userDAO.save(user);
     }
 
-    public User findById(HttpServletRequest req) {
-        return (User) userDAO.findById(req);
+    public User findById(User user) {
+        return (User) userDAO.findById(user);
     }
 
-    public User update (HttpServletRequest req) {
-        return (User) userDAO.update(req);
+    public User update (User user) {
+        return (User) userDAO.update(user);
     }
 
-    public User delete(HttpServletRequest req) {
-        return (User) userDAO.delete(req);
+    public User delete(User user) {
+        return (User) userDAO.delete(user);
     }
 
 }

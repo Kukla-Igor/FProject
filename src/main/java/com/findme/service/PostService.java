@@ -16,20 +16,20 @@ public class PostService {
         this.postDAO = postDAO;
     }
 
-    public Post save(HttpServletRequest req) {
-        return (Post) postDAO.save(req);
+    public Post save(Post post) {
+        return (Post) postDAO.save(post);
     }
 
-    public Post findById(HttpServletRequest req) {
-        return (Post) postDAO.findById(req);
+    public Post findById(Post post) {
+        return (Post) postDAO.findById(post);
     }
 
-    public Post update (HttpServletRequest req) {
-        return (Post) postDAO.update(req);
+    public Post update (Post post) {
+        return (Post) postDAO.update(post);
     }
 
-    public Post delete(HttpServletRequest req) {
-        return (Post) postDAO.delete(req);
+    public Post delete(Post post) {
+        return (Post) postDAO.delete(post);
     }
 
 }

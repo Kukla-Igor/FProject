@@ -21,11 +21,9 @@ public abstract class GenDAO<T extends IdEntity> {
     abstract Class aClass();
 
     @Transactional
-    public T save(HttpServletRequest req){
+    public T save(T t){
 
-        try (BufferedReader br = req.getReader()) {
-            System.out.println(br);
-            T t = toJavaObject(br);
+        try  {
             entityManager.persist(t);
             return t;
         } catch (Exception e){
@@ -35,9 +33,8 @@ public abstract class GenDAO<T extends IdEntity> {
     }
 
 
-    public  T findById(HttpServletRequest req) {
-        try (BufferedReader br = req.getReader()){
-            T t = toJavaObject(br);
+    public  T findById(T t) {
+        try {
             return (T) entityManager.find(aClass(),t.getId());
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -46,9 +43,8 @@ public abstract class GenDAO<T extends IdEntity> {
     }
 
     @Transactional
-    public T update(HttpServletRequest req){
-        try (BufferedReader br = req.getReader()) {
-            T t = toJavaObject(br);
+    public T update(T t){
+        try{
             entityManager.merge(t);
             return t;
         } catch (Exception e){
@@ -58,22 +54,14 @@ public abstract class GenDAO<T extends IdEntity> {
     }
 
     @Transactional
-    public T delete(HttpServletRequest req){
-
+    public T delete(T t){
         try {
-            T t = findById(req);
+            t = findById(t);
             entityManager.remove(t);
-            return t;
+            return null;
         } catch (Exception e){
-            e.getMessage();
+            System.out.println(e.getMessage());
             return null;
         }
-    }
-
-
-
-    private <T> T toJavaObject(BufferedReader br) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return (T)  mapper.readValue(br, aClass());
     }
 }
