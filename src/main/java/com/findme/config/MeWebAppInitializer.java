@@ -1,4 +1,0 @@
-package com.findme.config;
-
-public class MeWebAppInitializer {
-}

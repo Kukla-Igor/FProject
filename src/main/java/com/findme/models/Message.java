@@ -26,9 +26,9 @@ public class Message {
     @Column(name = "DATE_READ")
     private Date dateRead;
     @ManyToOne
-    @JoinColumn(name="USER_ID", nullable=false)
+    @JoinColumn(name="ID", nullable=false, insertable=false, updatable=false)
     private User userFrom;
     @ManyToOne
-    @JoinColumn(name="USER_ID", nullable=false)
+    @JoinColumn(name="ID", nullable=false, insertable=false, updatable=false)
     private User userTo;
 }
