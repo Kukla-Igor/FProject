@@ -15,7 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 @Controller
-public class PostController {
+public class PostController  {
     PostService postService;
 
     @Autowired
@@ -38,11 +38,11 @@ public class PostController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/findPost", produces = "text/plain")
     public @ResponseBody
-    Post doGet(HttpServletRequest req) {
+    Post doGet(HttpServletRequest req)  {
         try (BufferedReader br = req.getReader()) {
             Post post = toJavaObject(br);
             return postService.findById(post);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }

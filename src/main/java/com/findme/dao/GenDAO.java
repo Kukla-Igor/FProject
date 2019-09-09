@@ -1,6 +1,7 @@
 package com.findme.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.findme.exception.InternalServerException;
 import com.findme.models.IdEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,11 @@ public abstract class GenDAO<T extends IdEntity> {
     }
 
 
-    public  T findById(T t) {
+    public  T findById(T t) throws InternalServerException {
         try {
             return (T) entityManager.find(aClass(),t.getId());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+           throw new InternalServerException("InternalServerException");
         }
     }
 

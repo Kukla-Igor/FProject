@@ -1,6 +1,9 @@
 package com.findme.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.findme.exception.BadRequestException;
+import com.findme.exception.InternalServerException;
+import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.acl.LastOwnerException;
 
 @Controller
 public class UserController {
@@ -29,15 +33,15 @@ public class UserController {
     @RequestMapping(path = "/user/{userId}", method = RequestMethod.GET)
     public String profile(Model model, @PathVariable String userId) {
         try {
-            User user = new User();
-            user.setId(Long.parseLong(userId));
-            user = userService.findById(user);
-            if (user == null)
-                return "profileNotFound";
+            Long id = toLong(userId);
+            User user = userService.profile(id);
             model.addAttribute("user", user);
             return "profile";
-        } catch (Exception e) {
-            return "error";
+        } catch (UserNotFoundException e) {
+            return "profileNotFound";
+        } catch (BadRequestException | InternalServerException e) {
+            model.addAttribute("error", e.getMessage());
+            return "Error";
         }
 
     }
@@ -62,7 +66,7 @@ public class UserController {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.findById(user);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
@@ -95,5 +99,14 @@ public class UserController {
     private User toJavaObject(BufferedReader br) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(br, User.class);
+    }
+
+    private Long toLong(String text) throws BadRequestException {
+        try {
+            Long number = Long.parseLong(text);
+            return number;
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Bad request");
+        }
     }
 }

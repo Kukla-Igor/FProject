@@ -1,6 +1,7 @@
 package com.findme.service;
 
 import com.findme.dao.PostDAO;
+import com.findme.exception.InternalServerException;
 import com.findme.models.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class PostService {
         return (Post) postDAO.save(post);
     }
 
-    public Post findById(Post post) {
+    public Post findById(Post post) throws InternalServerException {
         return (Post) postDAO.findById(post);
     }
 
