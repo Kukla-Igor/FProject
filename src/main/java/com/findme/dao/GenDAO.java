@@ -22,14 +22,13 @@ public abstract class GenDAO<T extends IdEntity> {
     abstract Class aClass();
 
     @Transactional
-    public T save(T t){
+    public T save(T t) throws InternalServerException{
 
         try  {
             entityManager.persist(t);
             return t;
         } catch (Exception e){
-            System.out.println(e.getMessage());
-            return null;
+            throw new InternalServerException("InternalServerException");
     }
     }
 

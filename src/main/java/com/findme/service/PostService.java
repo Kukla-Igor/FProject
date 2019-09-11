@@ -17,7 +17,7 @@ public class PostService {
         this.postDAO = postDAO;
     }
 
-    public Post save(Post post) {
+    public Post save(Post post) throws InternalServerException {
         return (Post) postDAO.save(post);
     }
 

@@ -1,6 +1,7 @@
 package com.findme.service;
 
 import com.findme.dao.UserDAO;
+import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
@@ -18,7 +19,7 @@ public class UserService  {
         this.userDAO = userDAO;
     }
 
-    public User save(User user) {
+    public User save(User user) throws InternalServerException {
         return (User) userDAO.save(user);
     }
 
@@ -41,6 +42,11 @@ public class UserService  {
         if (user == null)
             throw new UserNotFoundException("profileNotFound");
         return user;
+    }
+
+    public void newUserCheck(User user) throws BadRequestException{
+        if (!userDAO.newUserCheck(user))
+            throw new BadRequestException("such user is already registered");
     }
 
 }

@@ -1,6 +1,7 @@
 package com.findme.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.findme.exception.InternalServerException;
 import com.findme.models.Post;
 import com.findme.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class PostController  {
 
     @RequestMapping(method = RequestMethod.POST, value = "/savePost", produces = "text/plain")
     public @ResponseBody
-    Post doPost(HttpServletRequest req, HttpServletResponse resp) {
+    Post doPost(HttpServletRequest req, HttpServletResponse resp) throws InternalServerException {
         try (BufferedReader br = req.getReader()) {
             Post post = toJavaObject(br);
             return postService.save(post);

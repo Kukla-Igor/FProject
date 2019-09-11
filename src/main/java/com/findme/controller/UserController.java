@@ -7,12 +7,11 @@ import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,10 +45,23 @@ public class UserController {
 
     }
 
+    @RequestMapping(value ="user-registration", method = RequestMethod.POST)
+    public ResponseEntity<String> registerUser(@ModelAttribute User user) {
+        try {
+            userService.newUserCheck(user);
+            userService.save(user);
+            return new ResponseEntity<>("ok", HttpStatus.OK);
+        } catch (BadRequestException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }  catch (InternalServerException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @RequestMapping(method = RequestMethod.POST, value = "/saveUser", produces = "text/plain")
     public @ResponseBody
-    User doPost(HttpServletRequest req) {
+    User doPost(HttpServletRequest req) throws InternalServerException {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.save(user);

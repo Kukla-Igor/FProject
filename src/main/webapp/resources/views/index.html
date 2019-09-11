@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Find me</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -10,8 +11,54 @@
             <h1>Welcome to Find me!</h1>
         </div>
 
+        <form id="registration-form">
+            <input type="text" name="firstName" required/>
+            <input type="text" name="phone" required/>
+            <button type="submit">Send</button>
+        </form>
 
+        <button id="text-ajax">Click here</button>
     </div>
 
+
 </body>
+
+<script>
+
+    // alert($("#text-ajax").text());
+    //
+    // $("#text-ajax").click(function () {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "/test-ajax",
+    //         data: {},
+    //         success: function  success() {
+    //             debugger;
+    //             alert("success");
+    //         },
+    //         error: function error(xhr) {
+    //             debugger;
+    //             alert("error");
+    //         }
+    //     });
+    // });
+
+    $("#registration-form").submit(function () {
+        $.ajax({
+            type: "POST",
+            url: "user-registration",
+            data: $("#registration-form").serialize(),
+            success: function success() {
+               debugger;
+                alert("user is saved");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("user is`t saved");
+            }
+        })
+    })
+
+
+</script>
 </html>
