@@ -1,13 +1,10 @@
 package com.findme.dao;
 
 import com.findme.models.User;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.util.List;
 
 
 @Repository
@@ -15,12 +12,14 @@ import java.util.List;
 
 public class UserDAO extends GenDAO{
 
-    public boolean newUserCheck(User user){
-        Query query = entityManager.createNativeQuery("select phone from users where phone = ?");
-        query.setParameter(1, user.getPhone());
-        List<Integer> list = query.getResultList();
-
-        return list.isEmpty();
+    public User userIdCheck(User user){
+        try {
+            Query query = entityManager.createNativeQuery("select * from users where phone = ?", User.class);
+            query.setParameter(1, user.getPhone());
+            return (User) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

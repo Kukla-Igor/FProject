@@ -48,7 +48,6 @@ public class UserController {
     @RequestMapping(value ="user-registration", method = RequestMethod.POST)
     public ResponseEntity<String> registerUser(@ModelAttribute User user) {
         try {
-            userService.newUserCheck(user);
             userService.save(user);
             return new ResponseEntity<>("ok", HttpStatus.OK);
         } catch (BadRequestException e){
@@ -61,7 +60,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/saveUser", produces = "text/plain")
     public @ResponseBody
-    User doPost(HttpServletRequest req) throws InternalServerException {
+    User doPost(HttpServletRequest req) throws InternalServerException, BadRequestException {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.save(user);

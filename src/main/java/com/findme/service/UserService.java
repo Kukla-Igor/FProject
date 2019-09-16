@@ -19,8 +19,10 @@ public class UserService  {
         this.userDAO = userDAO;
     }
 
-    public User save(User user) throws InternalServerException {
-        return (User) userDAO.save(user);
+    public User save(User user) throws InternalServerException, BadRequestException {
+        if (userDAO.userIdCheck(user) == null)
+            return (User) userDAO.save(user);
+        throw new BadRequestException("such user is already registered");
     }
 
     public User findById(User user) throws InternalServerException  {
@@ -44,9 +46,5 @@ public class UserService  {
         return user;
     }
 
-    public void newUserCheck(User user) throws BadRequestException{
-        if (!userDAO.newUserCheck(user))
-            throw new BadRequestException("such user is already registered");
-    }
 
 }
