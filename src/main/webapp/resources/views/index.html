@@ -14,7 +14,13 @@
         <form id="registration-form">
             <input type="text" name="firstName" required/>
             <input type="text" name="phone" required/>
-            <button type="submit">Send</button>
+            <button type="submit">Register</button>
+        </form>
+
+        <form id="login-form">
+            <input type="text" name="firstName" required/>
+            <input type="text" name="phone" required/>
+            <button type="submit">Login</button>
         </form>
 
         <button id="text-ajax">Click here</button>
@@ -55,6 +61,22 @@
             error: function error(xhr) {
                 debugger;
                 alert("user is`t saved");
+            }
+        })
+    })
+
+    $("#login-form").submit(function (e) {
+        $.ajax({
+            type: "POST",
+            url: "login",
+            data: $("#login-form").serialize(),
+            success: function success(data) {
+                debugger;
+                alert("user login");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("user is`t login");
             }
         })
     })

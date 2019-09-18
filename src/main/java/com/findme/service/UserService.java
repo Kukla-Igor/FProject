@@ -7,8 +7,7 @@ import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Service
 public class UserService  {
@@ -20,7 +19,7 @@ public class UserService  {
     }
 
     public User save(User user) throws InternalServerException, BadRequestException {
-        if (userDAO.userIdCheck(user) == null)
+        if (userDAO.findByPhone(user) == null)
             return (User) userDAO.save(user);
         throw new BadRequestException("such user is already registered");
     }
@@ -46,5 +45,12 @@ public class UserService  {
         return user;
     }
 
+
+    public User loginUser( User user) throws UserNotFoundException, InternalServerException{
+        user = userDAO.findByPhone(user);
+        if (user == null)
+            throw new UserNotFoundException("User isn`t registered");
+        return user;
+    }
 
 }

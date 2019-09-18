@@ -12,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionActivationListener;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.security.acl.LastOwnerException;
+
 
 @Controller
 public class UserController {
@@ -45,16 +46,32 @@ public class UserController {
 
     }
 
-    @RequestMapping(value ="user-registration", method = RequestMethod.POST)
+    @RequestMapping(value = "user-registration", method = RequestMethod.POST)
     public ResponseEntity<String> registerUser(@ModelAttribute User user) {
         try {
             userService.save(user);
             return new ResponseEntity<>("ok", HttpStatus.OK);
-        } catch (BadRequestException e){
+        } catch (BadRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }  catch (InternalServerException e){
+        } catch (InternalServerException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "login", method = RequestMethod.POST)
+    public ResponseEntity<String> loginUser(HttpSession session, @ModelAttribute User user) {
+        try {
+            user = userService.loginUser(user);
+//            if (session.getAttribute("user") != null)
+//                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
+            System.out.println(session.getAttribute("user"));
+            session.setAttribute("user", user);
+            System.out.println(session.getAttribute("user"));
+            return new ResponseEntity<>("ok", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (InternalServerException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);}
     }
 
 
