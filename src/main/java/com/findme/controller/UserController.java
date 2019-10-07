@@ -13,9 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionActivationListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -59,19 +57,27 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity<String> loginUser(HttpSession session, @ModelAttribute User user) {
+    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody User user) {
         try {
+            if (session.getAttribute("user") != null)
+                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
             user = userService.loginUser(user);
-//            if (session.getAttribute("user") != null)
-//                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
-            System.out.println(session.getAttribute("user"));
             session.setAttribute("user", user);
-            System.out.println(session.getAttribute("user"));
             return new ResponseEntity<>("ok", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (InternalServerException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);}
+    }
+
+    @RequestMapping(value = "logout", method = RequestMethod.POST)
+    public ResponseEntity<String> logoutUser(HttpSession session) {
+        try {
+            session.invalidate();
+            return new ResponseEntity<>("user logout", HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>("user is still online", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

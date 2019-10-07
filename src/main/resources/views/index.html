@@ -23,7 +23,7 @@
             <button type="submit">Login</button>
         </form>
 
-        <button id="text-ajax">Click here</button>
+        <button id="logout">Logout</button>
     </div>
 
 
@@ -31,23 +31,22 @@
 
 <script>
 
-    // alert($("#text-ajax").text());
-    //
-    // $("#text-ajax").click(function () {
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "/test-ajax",
-    //         data: {},
-    //         success: function  success() {
-    //             debugger;
-    //             alert("success");
-    //         },
-    //         error: function error(xhr) {
-    //             debugger;
-    //             alert("error");
-    //         }
-    //     });
-    // });
+
+    $("#logout").click(function () {
+        $.ajax({
+            type: "POST",
+            url: "logout",
+            data: {},
+            success: function  success() {
+                debugger;
+                alert("logout");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("error logout");
+            }
+        });
+    });
 
     $("#registration-form").submit(function (e) {
         $.ajax({
