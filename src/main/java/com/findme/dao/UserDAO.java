@@ -12,10 +12,10 @@ import javax.persistence.Query;
 
 public class UserDAO extends GenDAO{
 
-    public User findByPhone(User user) throws InternalServerException{
+    public User findByPhone(String phone) throws InternalServerException{
         try {
             Query query = entityManager.createNativeQuery("select * from users where phone = ?", User.class);
-            query.setParameter(1, user.getPhone());
+            query.setParameter(1, phone);
             return (User) query.getSingleResult();
         } catch (NoResultException e) {
             return null;

@@ -19,7 +19,7 @@ public class UserService  {
     }
 
     public User save(User user) throws InternalServerException, BadRequestException {
-        if (userDAO.findByPhone(user) == null)
+        if (userDAO.findByPhone(user.getPhone()) == null)
             return (User) userDAO.save(user);
         throw new BadRequestException("such user is already registered");
     }
@@ -46,10 +46,12 @@ public class UserService  {
     }
 
 
-    public User loginUser( User user) throws UserNotFoundException, InternalServerException{
-        user = userDAO.findByPhone(user);
+    public User loginUser( String phone, String password) throws UserNotFoundException, InternalServerException, BadRequestException{
+        User user = userDAO.findByPhone(phone);
         if (user == null)
             throw new UserNotFoundException("User isn`t registered");
+        if (!user.getPassword().equals(password))
+            throw new BadRequestException("Password is wrong");
         return user;
     }
 

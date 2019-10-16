@@ -6,16 +6,20 @@ import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.UserService;
+import jdk.nashorn.internal.ir.ObjectNode;
+import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Map;
 
 
 @Controller
@@ -45,7 +49,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "user-registration", method = RequestMethod.POST)
-    public ResponseEntity<String> registerUser(@ModelAttribute User user) {
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
         try {
             userService.save(user);
             return new ResponseEntity<>("ok", HttpStatus.OK);
@@ -57,25 +61,28 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody User user) {
+    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody Map<String, String> params) {
         try {
             if (session.getAttribute("user") != null)
                 return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
-            user = userService.loginUser(user);
+            User user = userService.loginUser(params.get("phone"), params.get("password"));
             session.setAttribute("user", user);
             return new ResponseEntity<>("ok", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (InternalServerException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);}
+        } catch (InternalServerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "logout", method = RequestMethod.POST)
     public ResponseEntity<String> logoutUser(HttpSession session) {
         try {
-            session.invalidate();
+            session.setAttribute("user", null);
             return new ResponseEntity<>("user logout", HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>("user is still online", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
