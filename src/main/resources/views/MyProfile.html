@@ -9,9 +9,7 @@
     <div class="left">
         <h1>Photo</h1>
 
-        <div>
-            <button id="add-to-friends" class="btn">Add to friends</button>
-        </div>
+
     </div>
 
     <div class="right">
@@ -24,21 +22,7 @@
 </body>
 <script>
 
-    $("#add-to-friends").click(function () {
-        $.ajax({
-            type: "POST",
-            url: "logout",
-            data: {},
-            success: function  success() {
-                debugger;
-                alert("logout");
-            },
-            error: function error(xhr) {
-                debugger;
-                alert("error logout");
-            }
-        });
-    });
+
 
 </script>
 <style>

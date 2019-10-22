@@ -6,17 +6,18 @@ import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.UserService;
-import jdk.nashorn.internal.ir.ObjectNode;
-import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.spi.http.HttpHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Map;
@@ -45,7 +46,6 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "Error";
         }
-
     }
 
     @RequestMapping(value = "user-registration", method = RequestMethod.POST)
@@ -61,13 +61,16 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody Map<String, String> params) {
+    public ResponseEntity <String> loginUser(Model model, HttpSession session,@RequestBody User user) {
         try {
             if (session.getAttribute("user") != null)
-                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
-            User user = userService.loginUser(params.get("phone"), params.get("password"));
+               return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
+            user = userService.loginUser(user.getPhone(), user.getPassword());
             session.setAttribute("user", user);
-            return new ResponseEntity<>("ok", HttpStatus.OK);
+            model.addAttribute("user", user);
+
+            //return "MyProfile";
+           return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (InternalServerException e) {
@@ -150,4 +153,5 @@ public class UserController {
             throw new BadRequestException("Bad request");
         }
     }
+
 }
