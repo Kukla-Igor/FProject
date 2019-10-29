@@ -7,7 +7,6 @@ import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpSession;
 
 @Service
 public class UserService  {
@@ -25,7 +24,7 @@ public class UserService  {
     }
 
     public User findById(User user) throws InternalServerException  {
-        return (User) userDAO.findById(user);
+        return (User) userDAO.findById(user.getId());
     }
 
     public User update (User user) {
@@ -39,7 +38,7 @@ public class UserService  {
     public User profile(Long id) throws UserNotFoundException,InternalServerException {
         User user = new User();
         user.setId(id);
-        user = (User) userDAO.findById(user);
+        user = (User) userDAO.findById(user.getId());
         if (user == null)
             throw new UserNotFoundException("profileNotFound");
         return user;

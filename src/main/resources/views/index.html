@@ -6,33 +6,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="starter-template">
-            <h1>Welcome to Find me!</h1>
-        </div>
-
-        <form id="registration-form">
-            <input type="text" name="firstName" required/>
-            <input type="text" name="phone" required/>
-            <input type="text" name="password" required/>
-            <button type="submit">Register</button>
-        </form>
-
-        <form id="login-form">
-            <input type="text" name="password" required/>
-            <input type="text" name="phone" required/>
-            <button type="submit">Login</button>
-        </form>
-
-        <button id="logout">Logout</button>
+<div class="container">
+    <div class="starter-template">
+        <h1>Welcome to Find me!</h1>
     </div>
+
+    <form id="registration-form">
+        <input type="text" name="firstName" required/>
+        <input type="text" name="phone" required/>
+        <input type="text" name="password" required/>
+        <button type="submit">Register</button>
+    </form>
+
+    <form id="login-form">
+        <input type="text" name="password" required/>
+        <input type="text" name="phone" required/>
+        <button type="submit">Login</button>
+    </form>
+
+    <button id="logout">Logout</button>
+</div>
 
 
 </body>
 
 <script>
-
-
     $("#logout").click(function () {
         $.ajax({
             type: "POST",
@@ -48,14 +46,14 @@
             }
         });
     });
-
     $("#registration-form").submit(function (e) {
+        e.preventDefault()
         $.ajax({
             type: "POST",
             url: "user-registration",
             data: $("#registration-form").serialize(),
             success: function success(data) {
-               debugger;
+                debugger;
                 alert("user is saved");
             },
             error: function error(xhr) {
@@ -64,33 +62,22 @@
             }
         })
     })
-
     $("#login-form").submit(function (e) {
-        location="http://google.ru";
-        document.location.href="http://google.ru";
+        e.preventDefault()
+        $.ajax({
+            type: "POST",
+            url: "login",
+            data: $("#login-form").serialize(),
+            success: function success(data) {
+                alert("user is login");
+                location="myProfile";
 
-        location.replace("http://google.ru");
-
-        window.location.reload("http://google.ru");
-
-        document.location.replace("http://google.ru");
-        // $.ajax({
-        //     type: "POST",
-        //     url: "login",
-        //     data: $("#login-form").serialize(),
-        //     success: function success(data) {
-        //         debugger;
-        //
-        //
-        //
-        //     },
-        //     error: function error(xhr) {
-        //         debugger;
-        //         alert("user is`t login");
-        //     }
-        // })
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("user is`t login");
+            }
+        })
     })
-
-
 </script>
 </html>

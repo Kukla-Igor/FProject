@@ -14,14 +14,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "RELATIONSHIP")
-public class Relationship {
+public class Relationship extends IdEntity{
     @Id
     @SequenceGenerator(name = "RELATIONSHIP_SEQ", sequenceName = "RELATIONSHIP_SEQUENCE", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RELATIONSHIP_SEQ")
     @Column(name = "ID")
     private Long id;
     @Column(name = "STATUS")
-    @JsonProperty("status")
+    @JsonProperty("status ")
     private Status status;
     @ManyToOne
     @JoinColumn(name="ID", nullable=false, insertable=false, updatable=false)

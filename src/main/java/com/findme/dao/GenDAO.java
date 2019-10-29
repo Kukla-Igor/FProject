@@ -33,9 +33,9 @@ public abstract class GenDAO<T extends IdEntity> {
     }
 
 
-    public  T findById(T t) throws InternalServerException {
+    public  T findById(long id) throws InternalServerException {
         try {
-            return (T) entityManager.find(aClass(),t.getId());
+            return (T) entityManager.find(aClass(),id);
         } catch (Exception e) {
            throw new InternalServerException("InternalServerException");
         }
@@ -55,7 +55,7 @@ public abstract class GenDAO<T extends IdEntity> {
     @Transactional
     public T delete(T t){
         try {
-            t = findById(t);
+            t = findById(t.getId());
             entityManager.remove(t);
             return null;
         } catch (Exception e){

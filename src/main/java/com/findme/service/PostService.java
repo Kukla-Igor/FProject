@@ -22,7 +22,7 @@ public class PostService {
     }
 
     public Post findById(Post post) throws InternalServerException {
-        return (Post) postDAO.findById(post);
+        return (Post) postDAO.findById(post.getId());
     }
 
     public Post update (Post post) {

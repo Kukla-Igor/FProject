@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Find me</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
 <div>
@@ -24,21 +25,23 @@
 </body>
 <script>
 
-    $("#add-to-friends").click(function () {
-        $.ajax({
-            type: "POST",
-            url: "logout",
-            data: {},
-            success: function  success() {
-                debugger;
-                alert("logout");
-            },
-            error: function error(xhr) {
-                debugger;
-                alert("error logout");
-            }
-        });
-    });
+
+     $("#add-to-friends").click(function () {
+         //e.preventDefault();
+         $.ajax({
+             type: "POST",
+             url: "addRelationship",
+             data: {},
+             success: function  success() {
+                 debugger;
+                 alert("Ok");
+             },
+             error: function error(xhr) {
+                 debugger;
+                 alert("error");
+             }
+         })
+     })
 
 </script>
 <style>

@@ -6,6 +6,7 @@ import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.UserService;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,11 +35,12 @@ public class UserController {
 
 
     @RequestMapping(path = "/user/{userId}", method = RequestMethod.GET)
-    public String profile(Model model, @PathVariable String userId) {
+    public String profile(Model model, @PathVariable String userId, HttpSession session) {
         try {
             Long id = toLong(userId);
             User user = userService.profile(id);
             model.addAttribute("user", user);
+            session.setAttribute("lustUserPage", user);
             return "profile";
         } catch (UserNotFoundException e) {
             return "profileNotFound";
@@ -49,7 +51,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "user-registration", method = RequestMethod.POST)
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(User user) {
         try {
             userService.save(user);
             return new ResponseEntity<>("ok", HttpStatus.OK);
@@ -61,15 +63,12 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity <String> loginUser(Model model, HttpSession session,@RequestBody User user) {
+    public ResponseEntity <String> loginUser(HttpSession session, @RequestBody User user) {
         try {
             if (session.getAttribute("user") != null)
                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
             user = userService.loginUser(user.getPhone(), user.getPassword());
             session.setAttribute("user", user);
-            model.addAttribute("user", user);
-
-            //return "MyProfile";
            return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -80,14 +79,20 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "myProfile", method = RequestMethod.GET)
+    public String MyProfile(Model model, HttpSession session) {
+        model.addAttribute("user", session.getAttribute("user"));
+        return "MyProfile";
+    }
+
+
+
     @RequestMapping(value = "logout", method = RequestMethod.POST)
     public ResponseEntity<String> logoutUser(HttpSession session) {
-        try {
+            if(session.getAttribute("user") == null)
+                return new ResponseEntity<>("user is still online", HttpStatus.INTERNAL_SERVER_ERROR);
             session.setAttribute("user", null);
-            return new ResponseEntity<>("user logout", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("user is still online", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
 
