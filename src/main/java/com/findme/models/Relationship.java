@@ -21,12 +21,12 @@ public class Relationship extends IdEntity{
     @Column(name = "ID")
     private Long id;
     @Column(name = "STATUS")
-    @JsonProperty("status ")
+    @JsonProperty("status")
     private Status status;
-    @ManyToOne
-    @JoinColumn(name="ID", nullable=false, insertable=false, updatable=false)
+    @OneToOne (fetch = FetchType.LAZY)
+    @JoinColumn (name = "USER_ID_FROM")
     private User userFrom;
-    @ManyToOne
-    @JoinColumn(name="ID", nullable=false, insertable=false, updatable=false)
+    @OneToOne (fetch = FetchType.LAZY)
+    @JoinColumn (name = "USER_ID_TO")
     private User userTo;
 }

@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity <String> loginUser(HttpSession session, @RequestBody User user) {
+    public ResponseEntity <String> loginUser(HttpSession session, User user) {
         try {
             if (session.getAttribute("user") != null)
                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
@@ -158,5 +158,9 @@ public class UserController {
             throw new BadRequestException("Bad request");
         }
     }
+
+
+
+
 
 }

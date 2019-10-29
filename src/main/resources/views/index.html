@@ -79,5 +79,25 @@
             }
         })
     })
+
+
+
+
+
+
+    $("#add-to-friends").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "add-relationship",
+            data: {},
+            success: function  success() {
+                alert("Ok");
+            },
+            error: function error(xhr) {
+                alert("error");
+            }
+        });
+    });
 </script>
 </html>

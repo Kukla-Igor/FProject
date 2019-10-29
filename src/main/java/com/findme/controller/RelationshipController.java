@@ -18,14 +18,12 @@ import javax.servlet.http.HttpSession;
 public class RelationshipController {
     RelationshipService relationshipService;
 
-    @RequestMapping(value = "addRelationship",  method = RequestMethod.POST)
+    @RequestMapping(value = "add-relationship",  method = RequestMethod.POST)
     public ResponseEntity<String> addRelationship(HttpSession session) {
         try {
-           // Long idTo = toLong(userId);
-            System.out.println(session.getAttribute("user"));
-            System.out.println(session.getAttribute("lustUserPage"));
-
             User userFrom = (User) session.getAttribute("user");
+            if (userFrom == null)
+                return new ResponseEntity<>("you are not logged in", HttpStatus.BAD_REQUEST);
             User userTo = (User) session.getAttribute("lustUserPage");
             relationshipService.addRelationship(userTo, userFrom);
             return new ResponseEntity<>("Ok", HttpStatus.OK);
@@ -33,8 +31,6 @@ public class RelationshipController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (InternalServerException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NullPointerException e){
-            return new ResponseEntity<>("you are not logged in", HttpStatus.BAD_REQUEST);
         }
     }
 

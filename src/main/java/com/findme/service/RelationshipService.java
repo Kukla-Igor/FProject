@@ -13,17 +13,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class RelationshipService {
     RelationshipDAO relationshipDAO;
-    UserDAO userDAO;
 
     public Relationship addRelationship(User userTo, User userFrom) throws InternalServerException, BadRequestException {
         Relationship relationship = new Relationship();
         relationship.setUserTo(userTo);
         relationship.setUserFrom(userFrom);
 
-        String status = relationshipDAO.getStatus(relationship);
+
+        Status status = relationshipDAO.getStatus(relationship);
 
         if (status == null) {
-            relationship.setStatus(Status.REQEST_SENT);
+            relationship.setStatus(Status.REQUEST_SENT);
+            System.out.println(relationship);
             return (Relationship) relationshipDAO.save(relationship);
         }
         throw new BadRequestException("sorry, your status is " + status);
