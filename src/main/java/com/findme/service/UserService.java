@@ -8,6 +8,8 @@ import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService  {
     UserDAO userDAO;
@@ -52,6 +54,11 @@ public class UserService  {
         if (!user.getPassword().equals(password))
             throw new BadRequestException("Password is wrong");
         return user;
+    }
+
+    public List getIncomeRequests(long userId) throws InternalServerException {
+
+        return  userDAO.getIncomingRequestsUsers(userId);
     }
 
 }

@@ -23,10 +23,10 @@ public class Relationship extends IdEntity{
     @Column(name = "STATUS")
     @JsonProperty("status")
     private Status status;
-    @OneToOne (fetch = FetchType.LAZY)
+    @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "USER_ID_FROM")
     private User userFrom;
-    @OneToOne (fetch = FetchType.LAZY)
+    @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "USER_ID_TO")
     private User userTo;
 }

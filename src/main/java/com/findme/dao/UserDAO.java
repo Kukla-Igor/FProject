@@ -1,10 +1,13 @@
 package com.findme.dao;
 
 import com.findme.exception.InternalServerException;
+import com.findme.models.Relationship;
 import com.findme.models.User;
 import org.springframework.stereotype.Repository;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -24,6 +27,23 @@ public class UserDAO extends GenDAO{
         }
     }
 
+    public List getIncomingRequestsUsers(long id) throws InternalServerException {
+        try {
+            Query query = entityManager.createNativeQuery("select * from RELATIONSHIP where USER_ID_TO = ?", Relationship.class);
+            query.setParameter(1, id);
+
+            List<Relationship> list =  query.getResultList();
+            List<User> users = new ArrayList<>();
+            for (Relationship relationship: list) {
+                users.add(relationship.getUserFrom());
+            }
+            return users;
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e){
+            throw new InternalServerException("InternalServerException");
+        }
+    }
 
     @Override
     Class aClass() {

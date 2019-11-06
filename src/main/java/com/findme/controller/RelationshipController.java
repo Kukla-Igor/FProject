@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 public class RelationshipController {
@@ -34,15 +35,15 @@ public class RelationshipController {
         }
     }
 
+    @RequestMapping(value = "update-relationship",  method = RequestMethod.POST)
+    public void updateRelationship(HttpSession session, String user, String status) {
 
-        private Long toLong(String text) throws BadRequestException {
-            try {
-                Long number = Long.parseLong(text);
-                return number;
-            } catch (NumberFormatException e) {
-                throw new BadRequestException("Bad request");
-            }
-        }
+
+    }
+
+
+
+
     @Autowired
     public RelationshipController(RelationshipService relationshipService) {
         this.relationshipService = relationshipService;

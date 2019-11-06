@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Find me</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
 <div>
     <div class="left">
         <h1>Photo</h1>
-
 
     </div>
 
@@ -16,16 +16,58 @@
         Styled text here
         <p th:text="${user.firstName}"></p>
         <p th:text="${user.city}"></p>
+        <button id="logout">Logout</button>
     </div>
 
-
+    <div class="right">
+        Friend requests
+        <ul th:each="users : ${relationships}" id="in-request-list">
+            <li>
+                <p th:text="${users.firstName}"   ></p>
+                <button th:data-userRequest="${users.firstName}" class="accept">Accept</button>
+                <button class="not-accept">Not accept</button>
+            </li>
+        </ul>
+    </div>
 
 </div>
 </body>
-<script>
+<script  th:inline="javascript">
 
 
 
+    $("#logout").click(function () {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "logout",
+            data: {},
+            success: function  success() {
+                debugger;
+                alert("logout");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("error logout");
+            }
+        });
+    });
+
+    $(".accept").click(function (e) {
+        console.log($(e.relatedTarget));
+        $.ajax({
+            type: "POST",
+            url: "update-relationship",
+            data: {status: "friend", user: $(e.relatedTarget).data("userRequest")},
+            success: function  success() {
+                alert("updated");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("not updated");
+            }
+        });
+    });
 
 
 </script>

@@ -10,9 +10,7 @@
     <div class="left">
         <h1>Photo</h1>
 
-        <div>
-            <button id="add-to-friends" class="btn">Add to friends</button>
-        </div>
+
     </div>
 
     <div class="right">
@@ -21,27 +19,34 @@
         <p th:text="${user.city}"></p>
     </div>
 
+
+
+    <div>
+        <button id="add-to-friends" class="btn">Add to friends</button>
+    </div>
+
 </div>
 </body>
 <script>
-
-
 
 
      $("#add-to-friends").click(function (e) {
          e.preventDefault();
          $.ajax({
              type: "POST",
-             url: "add-relationship",
+             url: "http://localhost:8080/add-relationship",
              data: {},
              success: function  success() {
                  alert("Ok");
              },
              error: function error(xhr) {
+                 debugger;
                  alert("error");
              }
          });
      });
+
+
 
 </script>
 <style>

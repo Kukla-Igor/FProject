@@ -24,28 +24,13 @@
         <button type="submit">Login</button>
     </form>
 
-    <button id="logout">Logout</button>
 </div>
 
 
 </body>
 
 <script>
-    $("#logout").click(function () {
-        $.ajax({
-            type: "POST",
-            url: "logout",
-            data: {},
-            success: function  success() {
-                debugger;
-                alert("logout");
-            },
-            error: function error(xhr) {
-                debugger;
-                alert("error logout");
-            }
-        });
-    });
+
     $("#registration-form").submit(function (e) {
         e.preventDefault()
         $.ajax({
@@ -80,24 +65,5 @@
         })
     })
 
-
-
-
-
-
-    $("#add-to-friends").click(function (e) {
-        e.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: "add-relationship",
-            data: {},
-            success: function  success() {
-                alert("Ok");
-            },
-            error: function error(xhr) {
-                alert("error");
-            }
-        });
-    });
 </script>
 </html>

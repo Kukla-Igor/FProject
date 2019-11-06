@@ -10,6 +10,8 @@ import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RelationshipService {
     RelationshipDAO relationshipDAO;
@@ -18,17 +20,16 @@ public class RelationshipService {
         Relationship relationship = new Relationship();
         relationship.setUserTo(userTo);
         relationship.setUserFrom(userFrom);
-
-
         Status status = relationshipDAO.getStatus(relationship);
 
         if (status == null) {
             relationship.setStatus(Status.REQUEST_SENT);
-            System.out.println(relationship);
             return (Relationship) relationshipDAO.save(relationship);
         }
         throw new BadRequestException("sorry, your status is " + status);
     }
+
+
 
     @Autowired
     public RelationshipService(RelationshipDAO relationshipDAO) {
