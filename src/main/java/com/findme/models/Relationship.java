@@ -29,4 +29,10 @@ public class Relationship extends IdEntity{
     @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "USER_ID_TO")
     private User userTo;
+
+    public Relationship(Status status, User userFrom, User userTo) {
+        this.status = status;
+        this.userFrom = userFrom;
+        this.userTo = userTo;
+    }
 }

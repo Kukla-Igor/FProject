@@ -20,12 +20,32 @@
     </div>
 
     <div class="right">
-        Friend requests
-        <ul th:each="users : ${relationships}" id="in-request-list">
+        Incoming friend requests
+        <ul th:each="users : ${incomingRequests}" id="in-request-list">
             <li>
-                <p th:text="${users.firstName}"   ></p>
-                <button th:data-userRequest="${users.firstName}" class="accept">Accept</button>
-                <button class="not-accept">Not accept</button>
+                <p th:text="${users.firstName}"></p>
+                <button class="accept" th:attr="data-first-name=${users.id}">Accept</button>
+                <button class="not-accept" th:attr="data-first-name=${users.id}">Not accept</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="right">
+        Outgoing friend requests
+        <ul th:each="users : ${outgoingRequests}" id="out-request-list">
+            <li>
+                <p th:text="${users.firstName}"></p>
+                <button class="abort" th:attr="data-first-name=${users.id}">Abort</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="right">
+        Friends
+        <ul th:each="users : ${friends}" id="friends">
+            <li>
+                <p th:text="${users.firstName}"></p>
+                <button class="delete" th:attr="data-first-name=${users.id}">Delete</button>
             </li>
         </ul>
     </div>
@@ -37,7 +57,6 @@
 
 
     $("#logout").click(function () {
-        e.preventDefault();
         $.ajax({
             type: "POST",
             url: "logout",
@@ -54,11 +73,25 @@
     });
 
     $(".accept").click(function (e) {
-        console.log($(e.relatedTarget));
         $.ajax({
             type: "POST",
             url: "update-relationship",
-            data: {status: "friend", user: $(e.relatedTarget).data("userRequest")},
+            data: {status: "FRIEND", idUser: this.dataset.firstName},
+            success: function  success() {
+                alert("update");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("not update");
+            }
+        });
+    });
+
+    $(".not-accept").click(function (e) {
+        $.ajax({
+            type: "POST",
+            url: "update-relationship",
+            data: {status: "REQUEST_DENIED", idUser: this.dataset.firstName},
             success: function  success() {
                 alert("updated");
             },
@@ -69,6 +102,35 @@
         });
     });
 
+    $(".abort").click(function (e) {
+        $.ajax({
+            type: "POST",
+            url: "delete-relationship",
+            data: {idUser: this.dataset.firstName},
+            success: function  success() {
+                alert("deleted");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("not deleted");
+            }
+        });
+    });
+
+    $(".delete").click(function (e) {
+        $.ajax({
+            type: "POST",
+            url: "update-relationship",
+            data: {status: "WAS_FRIEND",idUser: this.dataset.firstName},
+            success: function  success() {
+                alert("deleted");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("not deleted");
+            }
+        });
+    });
 
 </script>
 <style>

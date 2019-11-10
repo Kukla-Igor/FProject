@@ -4,6 +4,7 @@ import com.findme.dao.UserDAO;
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
+import com.findme.models.Status;
 import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class UserService  {
         throw new BadRequestException("such user is already registered");
     }
 
-    public User findById(User user) throws InternalServerException  {
-        return (User) userDAO.findById(user.getId());
+    public User findById(long id) throws InternalServerException  {
+        return (User) userDAO.findById(id);
     }
 
     public User update (User user) {
@@ -56,9 +57,16 @@ public class UserService  {
         return user;
     }
 
-    public List getIncomeRequests(long userId) throws InternalServerException {
-
+    public List getIncomingRequests(long userId) throws InternalServerException {
         return  userDAO.getIncomingRequestsUsers(userId);
+    }
+
+    public List getOutcomeRequests(long userId) throws InternalServerException {
+        return  userDAO.getOutcomeRequestsUsers(userId);
+    }
+
+    public List getFriends(long userId) throws InternalServerException {
+        return  userDAO.getFriends(userId);
     }
 
 }

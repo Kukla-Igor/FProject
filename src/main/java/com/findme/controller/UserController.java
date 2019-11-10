@@ -5,25 +5,18 @@ import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
-import com.findme.service.RelationshipService;
 import com.findme.service.UserService;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.spi.http.HttpHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+
 
 
 @Controller
@@ -88,8 +81,9 @@ public class UserController {
                 return "Error";
             User user = (User) session.getAttribute("user");
             model.addAttribute("user", user);
-            model.addAttribute("relationships", userService.getIncomeRequests(user.getId()));
-
+            model.addAttribute("incomingRequests", userService.getIncomingRequests(user.getId()));
+            model.addAttribute("outgoingRequests", userService.getOutcomeRequests(user.getId()));
+            model.addAttribute("friends", userService.getFriends(user.getId()));
             return "MyProfile";
         } catch (InternalServerException e) {
             return "Error";
@@ -124,7 +118,7 @@ public class UserController {
     User doGet(HttpServletRequest req) {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
-            return userService.findById(user);
+            return userService.findById(user.getId());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;

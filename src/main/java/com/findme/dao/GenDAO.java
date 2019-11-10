@@ -47,7 +47,6 @@ public abstract class GenDAO<T extends IdEntity> {
             entityManager.merge(t);
             return t;
         } catch (Exception e){
-            System.out.println(e.getMessage());
            return null;
         }
     }
@@ -59,7 +58,7 @@ public abstract class GenDAO<T extends IdEntity> {
             entityManager.remove(t);
             return null;
         } catch (Exception e){
-            System.out.println(e.getMessage());
+
             return null;
         }
     }
