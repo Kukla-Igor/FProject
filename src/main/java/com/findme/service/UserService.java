@@ -4,11 +4,9 @@ import com.findme.dao.UserDAO;
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
-import com.findme.models.Status;
 import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -21,9 +19,13 @@ public class UserService  {
     }
 
     public User save(User user) throws InternalServerException, BadRequestException {
-        if (userDAO.findByPhone(user.getPhone()) == null)
-            return (User) userDAO.save(user);
-        throw new BadRequestException("such user is already registered");
+        if (user.getPhone().isEmpty() || user.getEMail().isEmpty() || user.getFirstName().isEmpty() || user.getLastName().isEmpty() || user.getPassword().isEmpty())
+            throw new BadRequestException("empty field");
+        if (userDAO.findByPhoneOrEMail(user.getPhone(), user.getEMail()) != null)
+            throw new BadRequestException("such user is already registered");
+
+        return (User) userDAO.save(user);
+
     }
 
     public User findById(long id) throws InternalServerException  {

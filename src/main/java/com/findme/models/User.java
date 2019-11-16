@@ -83,6 +83,10 @@ public class User extends IdEntity {
     @JsonProperty("password")
     private String password;
 
+    @Column(name = "EMAIL")
+    @JsonProperty("email")
+    private String eMail;
+
     @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Message> messagesSent;
     @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
