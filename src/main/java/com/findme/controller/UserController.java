@@ -60,6 +60,8 @@ public class UserController {
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<String> loginUser(HttpSession session, String password, String phone) {
         try {
+            if(password.isEmpty() || phone.isEmpty())
+                return new ResponseEntity<>("empty field", HttpStatus.BAD_REQUEST);
             if (session.getAttribute("user") != null)
                 return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
             User user = userService.loginUser(phone, password);
