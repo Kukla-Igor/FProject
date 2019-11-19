@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-
-
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -58,13 +57,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity<String> loginUser(HttpSession session, String password, String phone) {
+    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody Map<String, String> params) {
         try {
-            if(password.isEmpty() || phone.isEmpty())
+            if(params.get("password").isEmpty() || (params.get("phone").isEmpty()))
                 return new ResponseEntity<>("empty field", HttpStatus.BAD_REQUEST);
             if (session.getAttribute("user") != null)
                 return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
-            User user = userService.loginUser(phone, password);
+            User user = userService.loginUser(params.get("phone"), params.get("password"));
             session.setAttribute("user", user);
             return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (UserNotFoundException e) {
