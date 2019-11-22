@@ -73,10 +73,12 @@
     });
 
     $(".accept").click(function (e) {
+        var dataForm = {"status":"FRIEND", "idUser":this.dataset.firstName};
         $.ajax({
             type: "POST",
             url: "update-relationship",
-            data: {status: "FRIEND", idUser: this.dataset.firstName},
+            data:JSON.stringify(dataForm),
+            contentType : "application/json",
             success: function  success() {
                 alert("update");
             },
@@ -88,10 +90,12 @@
     });
 
     $(".not-accept").click(function (e) {
+        var dataForm = {"status":"REQUEST_DENIED", "idUser":this.dataset.firstName};
         $.ajax({
             type: "POST",
             url: "update-relationship",
-            data: {status: "REQUEST_DENIED", idUser: this.dataset.firstName},
+            data:JSON.stringify(dataForm),
+            contentType : "application/json",
             success: function  success() {
                 alert("updated");
             },
@@ -103,10 +107,12 @@
     });
 
     $(".abort").click(function (e) {
+        var dataForm = {"idUser":this.dataset.firstName};
         $.ajax({
             type: "POST",
             url: "delete-relationship",
-            data: {idUser: this.dataset.firstName},
+            data:JSON.stringify(dataForm),
+            contentType : "application/json",
             success: function  success() {
                 alert("deleted");
             },
@@ -118,10 +124,12 @@
     });
 
     $(".delete").click(function (e) {
+        var dataForm = {"status":"WAS_FRIEND", "idUser":this.dataset.firstName};
         $.ajax({
             type: "POST",
             url: "update-relationship",
-            data: {status: "WAS_FRIEND",idUser: this.dataset.firstName},
+            data:JSON.stringify(dataForm),
+            contentType : "application/json",
             success: function  success() {
                 alert("deleted");
             },

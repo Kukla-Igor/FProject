@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import javax.persistence.*;
+import java.util.Date;
 
 
 @Setter
@@ -29,10 +30,14 @@ public class Relationship extends IdEntity{
     @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "USER_ID_TO")
     private User userTo;
+    @Column(name = "LUST_MOD_DATE")
+    @JsonProperty("lustModDate")
+    private Date lustModDate;
 
-    public Relationship(Status status, User userFrom, User userTo) {
+    public Relationship(Status status, User userFrom, User userTo, Date lustModDate) {
         this.status = status;
         this.userFrom = userFrom;
         this.userTo = userTo;
+        this.lustModDate = lustModDate;
     }
 }
