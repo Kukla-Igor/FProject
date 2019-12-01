@@ -8,6 +8,7 @@ import com.findme.models.Status;
 import com.findme.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 import static com.findme.models.Status.*;
@@ -15,9 +16,17 @@ import static com.findme.models.Status.*;
 @Service
 public class RelationshipService {
     RelationshipDAO relationshipDAO;
+    @Autowired
+    UserService userService;
 
-    public Relationship addRelationship(User userTo, User userFrom, List outgoingRequests) throws InternalServerException, BadRequestException {
-        requestSizeCheck(outgoingRequests);
+    public Relationship addRelationship(HttpSession session) throws InternalServerException, BadRequestException {
+        User userFrom = (User) session.getAttribute("user");
+        if (userFrom == null)
+            throw new BadRequestException("you are not logged in");
+        User userTo = (User) session.getAttribute("lustUserPage");
+        List outgoingRequests = userService.getOutcomeRequests(userFrom.getId());
+        if (outgoingRequests.size() > 10)
+            throw new BadRequestException("too many outgoing requests");
 
         Relationship relationship = relationshipDAO.getRelationship(userFrom.getId(), userTo.getId());
 
@@ -29,11 +38,16 @@ public class RelationshipService {
     }
 
 
-    public Relationship updateRelationship(User userTo, User userFrom, Status newStatus, List outgoingRequests, List friends) throws InternalServerException, BadRequestException {
+    public Relationship updateRelationship(HttpSession session, Map<String, String> params) throws InternalServerException, BadRequestException {
+        Status newStatus = Status.valueOf(params.get("status"));
+        User userTo = (User) session.getAttribute("user");
+        User userFrom = userService.findById(Long.parseLong(params.get("idUser")));
+        List outgoingRequests = userService.getOutcomeRequests(userTo.getId());
+        List friends = userService.getFriends(userFrom.getId());
         Relationship relationship = relationshipDAO.getRelationship(userFrom.getId(), userTo.getId());
-
         if (newStatus.equals(FRIEND)  && relationship.getStatus().equals(REQUEST_SENT)) {
-            requestSizeCheck(outgoingRequests, friends);
+            if (outgoingRequests.size() > 10 || friends.size() > 100)
+                throw new BadRequestException("too many outgoing requests or friends");
             return (Relationship) relationshipDAO.update(addRelationshipStatusAndDate(relationship, newStatus));
         } else if ( newStatus.equals(REQUEST_DENIED) && relationship.getStatus().equals(REQUEST_SENT)) {
             return (Relationship) relationshipDAO.update(addRelationshipStatusAndDate(relationship, newStatus));
@@ -46,7 +60,10 @@ public class RelationshipService {
 
 
 
-    public Relationship delete(User userTo, User userFrom) throws InternalServerException, BadRequestException {
+    public Relationship abort(HttpSession session, Map<String, String> params) throws InternalServerException, BadRequestException {
+        User userFrom = (User) session.getAttribute("user");
+        long idTo = Long.parseLong(params.get("idUser"));
+        User userTo = userService.findById(idTo);
         Relationship relationship = relationshipDAO.getRelationship(userFrom.getId(), userTo.getId());
         if (relationship.getStatus().equals(REQUEST_SENT)) {
             return (Relationship) relationshipDAO.delete(relationship);
@@ -54,15 +71,6 @@ public class RelationshipService {
         throw new BadRequestException("sorry, your status is " + relationship.getStatus());
     }
 
-    private void requestSizeCheck(List outgoingRequests) throws BadRequestException{
-        if (outgoingRequests.size() > 10)
-            throw new BadRequestException("too many outgoing requests");
-    }
-
-    private void requestSizeCheck(List outgoingRequests, List friends) throws BadRequestException{
-        if (outgoingRequests.size() > 10 || friends.size() > 100)
-            throw new BadRequestException("too many outgoing requests or friends");
-    }
 
     private void dateCheck(Date lustModDate) throws BadRequestException{
         Calendar nowDate = new GregorianCalendar();
