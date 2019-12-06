@@ -32,6 +32,9 @@ public class UserController {
     public String profile(Model model, @PathVariable String userId, HttpSession session) {
         try {
             Long id = toLong(userId);
+            User userNow = (User) session.getAttribute("user");
+            if (id.equals(userNow.getId()))
+                return MyProfile(model, session);
             User user = userService.profile(id);
             model.addAttribute("user", user);
             session.setAttribute("lustUserPage", user);

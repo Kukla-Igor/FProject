@@ -110,7 +110,7 @@
         var dataForm = {"idUser":this.dataset.firstName};
         $.ajax({
             type: "POST",
-            url: "abort",
+            url: "update-relationship",
             data:JSON.stringify(dataForm),
             contentType : "application/json",
             success: function  success() {

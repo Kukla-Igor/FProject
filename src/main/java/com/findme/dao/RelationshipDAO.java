@@ -17,7 +17,7 @@ public class RelationshipDAO extends GenDAO {
             query.setParameter("firstId", idFrom);
             query.setParameter("secondId", idTo);
             return (Relationship) query.getSingleResult();
-        } catch (NoResultException e) {
+        } catch (NoResultException | NullPointerException e ) {
             return null;
         } catch (Exception e){
             throw new InternalServerException("InternalServerException: " + e.getMessage());

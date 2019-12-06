@@ -40,7 +40,6 @@ public class RelationshipController {
     @RequestMapping(value = "update-relationship", method = RequestMethod.POST)
     public ResponseEntity<String> updateRelationship(HttpSession session, @RequestBody Map<String, String> params) {
         try {
-
             relationshipService.updateRelationship(session, params);
             return new ResponseEntity<>("Ok", HttpStatus.OK);
         } catch (InternalServerException e) {
@@ -50,16 +49,5 @@ public class RelationshipController {
         }
     }
 
-    @RequestMapping(value = "abort", method = RequestMethod.POST)
-    public ResponseEntity<String> deleteRelationship(HttpSession session,  @RequestBody Map<String, String> params) {
-        try {
-            relationshipService.abort(session, params);
-            return new ResponseEntity<>("Ok", HttpStatus.OK);
-        } catch (InternalServerException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (BadRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
 }
 
