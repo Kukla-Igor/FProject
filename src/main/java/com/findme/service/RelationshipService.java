@@ -4,8 +4,9 @@ import com.findme.dao.RelationshipDAO;
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.models.Relationship;
+import com.findme.models.Status;
 import com.findme.models.User;
-import com.findme.service.updateRelationship.*;
+import com.findme.service.chainOfResponsibility.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,8 @@ import static com.findme.models.Status.*;
 public class RelationshipService {
     RelationshipDAO relationshipDAO;
     UserService userService;
+
+
     @Autowired
     public RelationshipService(RelationshipDAO relationshipDAO, UserService userService) {
         this.relationshipDAO = relationshipDAO;
@@ -44,18 +47,24 @@ public class RelationshipService {
     }
 
     public void updateRelationship(HttpSession session, Map<String, String> params) throws InternalServerException, BadRequestException {
-        Update abort = new AbortRelationship(relationshipDAO, userService);
-        Update addToFriends = new AddToFriends(relationshipDAO, userService);
-        Update denyToFriends = new DenyToFriends(relationshipDAO, userService);
-        Update deleteFromFriends = new DeleteFromFriends(relationshipDAO, userService);
-
-        abort.setNextUpdate(addToFriends);
-        addToFriends.setNextUpdate(denyToFriends);
-        denyToFriends.setNextUpdate(deleteFromFriends);
-        deleteFromFriends.setNextUpdate(null);
-
-        abort.isUpdate(session,params);
+        long userToId = ((User) session.getAttribute("user")).getId();
+        long userFromId = Long.parseLong(params.get("idUser"));
+        Relationship relationship = relationshipDAO.getRelationship(userFromId, userToId);
+        Status newStatus = null;
+        if (params.get("status") != null)
+            newStatus = Status.valueOf(params.get("status"));
 
 
+        Chains abort = new AbortRelationship(relationshipDAO);
+        Chains addToFriends = new AddToFriends(relationshipDAO, userService, userToId, userFromId);
+        Chains denyToFriends = new DenyToFriends(relationshipDAO);
+        Chains deleteFromFriends = new DeleteFromFriends(relationshipDAO);
+
+        abort.setNextChain(addToFriends);
+        addToFriends.setNextChain(denyToFriends);
+        denyToFriends.setNextChain(deleteFromFriends);
+        deleteFromFriends.setNextChain(null);
+
+        abort.newChain(newStatus, relationship);
     }
     }
