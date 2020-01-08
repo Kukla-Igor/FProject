@@ -50,6 +50,17 @@
         </ul>
     </div>
 
+    <div class="post">
+        <form class="post-form">
+            <textarea name="post-text" cols="40" rows="3" id="text" required></textarea>
+            <input type="text" name="location" placeholder="Location" id="location"/>
+            <input type="text" name="usersTagget" placeholder="UsersTagget" id="usersTagget"/>
+            <button type="submit">Send post</button>
+
+        </form>
+
+    </div>
+
 </div>
 </body>
 <script  th:inline="javascript">
@@ -140,6 +151,25 @@
         });
     });
 
+    $(".post-form").submit(function (e) {
+        var dataForm = {"message":$('#text').val(), "location":$('#location').val(), "usersTagget":$('#usersTagget').val()};
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "createPost",
+            data: JSON.stringify(dataForm),
+            contentType : "application/json",
+
+            success: function success() {
+                alert("post sent");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("post not sent");
+            }
+        })
+    })
+
 </script>
 <style>
     .left{
@@ -153,8 +183,10 @@
         margin-left: 300px;
     }
 
-    .btn{
+    .post-form{
         margin-top: 230px;
+        margin-left: -200px;
+        display: inline-grid;
     }
 </style>
 </html>

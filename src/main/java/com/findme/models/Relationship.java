@@ -21,15 +21,19 @@ public class Relationship extends IdEntity{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RELATIONSHIP_SEQ")
     @Column(name = "ID")
     private Long id;
+
     @Column(name = "STATUS")
     @JsonProperty("status")
     private Status status;
+
     @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "USER_ID_FROM")
     private User userFrom;
+
     @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "USER_ID_TO")
     private User userTo;
+
     @Column(name = "LUST_MOD_DATE")
     @JsonProperty("lustModDate")
     private Date lustModDate;

@@ -5,10 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -87,10 +86,22 @@ public class User extends IdEntity {
     @JsonProperty("email")
     private String eMail;
 
-    @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Message> messagesSent;
-    @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Message> messagesReceived;
+
+    @OneToMany(mappedBy = "userPosted", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Post> userPosted;
+
+    @OneToMany(mappedBy = "userPagePosted", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Post> userPagePosted;
+
+//    @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+//    private List<Message> messagesSent;
+//
+//    @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+//    private List<Message> messagesReceived;
+
+    @ManyToMany(mappedBy = "usersTagget")
+    private List<Post> posts = new ArrayList<>();
+
 
     @Override
     public String toString() {

@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 @Setter
 @Getter
 @ToString
@@ -34,10 +36,28 @@ public class Post extends IdEntity {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date datePosted;
 
-    @OneToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name = "ID")
-    @JsonProperty("user")
+
+    @Column(name = "LOCATION")
+    @JsonProperty("location")
+    private String location;
+
+    @ManyToMany
+    @JoinTable(
+            name = "USERS_POSTS",
+            joinColumns = { @JoinColumn(name = "POST_ID")},
+            inverseJoinColumns = { @JoinColumn(name = "USER_ID")}
+    )
+    private List<User> usersTagget = new ArrayList<>();
+
+
+    @ManyToOne
+    @JoinColumn(name="USER_POSTED", nullable=false)
     private User userPosted;
+
+    @ManyToOne
+    @JoinColumn(name="USER_PAGE_POSTED", nullable=false)
+    private User userPagePosted;
+
     //TODO
     //levels permissions
     //TODO
