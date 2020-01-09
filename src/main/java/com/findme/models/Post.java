@@ -14,7 +14,6 @@ import java.util.List;
 
 @Setter
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 @Table(name = "POST")
@@ -40,8 +39,8 @@ public class Post extends IdEntity {
     @Column(name = "LOCATION")
     @JsonProperty("location")
     private String location;
-
-    @ManyToMany
+//(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @ManyToMany ( fetch = FetchType.EAGER)
     @JoinTable(
             name = "USERS_POSTS",
             joinColumns = { @JoinColumn(name = "POST_ID")},
@@ -57,6 +56,19 @@ public class Post extends IdEntity {
     @ManyToOne
     @JoinColumn(name="USER_PAGE_POSTED", nullable=false)
     private User userPagePosted;
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", message='" + message + '\'' +
+                ", datePosted=" + datePosted +
+                ", location='" + location + '\'' +
+                //", usersTagget=" + usersTagget +
+                ", userPosted=" + userPosted.getFirstName() + " " + userPosted.getLastName() +
+                ", userPagePosted=" + userPagePosted.getFirstName() + " " + userPagePosted.getLastName() +
+                '}';
+    }
 
     //TODO
     //levels permissions

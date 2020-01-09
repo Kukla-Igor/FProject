@@ -5,6 +5,7 @@ import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
+import com.findme.service.PostService;
 import com.findme.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,12 @@ import java.util.Map;
 @Controller
 public class UserController {
     UserService userService;
+    PostService postService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PostService postService) {
         this.userService = userService;
+        this.postService = postService;
     }
 
 
@@ -88,6 +91,8 @@ public class UserController {
             model.addAttribute("incomingRequests", userService.getIncomingRequests(user.getId()));
             model.addAttribute("outgoingRequests", userService.getOutcomeRequests(user.getId()));
             model.addAttribute("friends", userService.getFriends(user.getId()));
+            model.addAttribute("allPosts", postService.getPostsById(user.getId()));
+
             return "MyProfile";
         } catch (InternalServerException e) {
             return "Error";

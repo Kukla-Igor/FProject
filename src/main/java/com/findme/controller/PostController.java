@@ -38,32 +38,21 @@ public class PostController  {
     }
 
     @RequestMapping(value = "createPost", method = RequestMethod.POST)
-    public ResponseEntity<String> createPost(HttpSession session, @RequestBody Map<String, String> params) {
+    public ResponseEntity<String> createPost(HttpSession session, Post post, String usersTagg) {
         try {
-            if(params.get("message").isEmpty())
-                return new ResponseEntity<>("empty field", HttpStatus.BAD_REQUEST);
-            Post post = new Post();
-            post.setMessage(params.get("message"));
-            post.setDatePosted(new Date());
-            if(!params.get("location").isEmpty())
-                post.setLocation(params.get("location"));
             post.setUserPosted((User) session.getAttribute("user"));
             if (session.getAttribute("lustUserPage") == null)
                 post.setUserPagePosted((User) session.getAttribute("user"));
             else
                 post.setUserPagePosted((User) session.getAttribute("lustUserPage"));
-            if (!params.get("usersTagget").isEmpty()){
-                String[] arr = params.get("usersTagget").split(", ");
-                List<User> usersTagget = new ArrayList<>();
-                for (String part: arr) {
-                    usersTagget.add(userService.findById(Long.parseLong(part)));
-                }
-                post.setUsersTagget(usersTagget);
-            }
-            postService.save(post);
+            postService.createPost(post, usersTagg);
             return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (InternalServerException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (BadRequestException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (UserNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
