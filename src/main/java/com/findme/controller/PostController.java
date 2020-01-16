@@ -1,5 +1,6 @@
 package com.findme.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
@@ -12,18 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -56,6 +52,14 @@ public class PostController  {
         }
     }
 
+
+    @RequestMapping(value = "postFilter", method = RequestMethod.POST)
+    public ResponseEntity<String> postFilter(HttpSession session, @RequestBody Map<String, String> params) {
+
+        session.setAttribute("filterPostsUserId", (params.get("filterPostsUserId")));
+        return new ResponseEntity<>("OK", HttpStatus.OK);
+
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/savePost", produces = "text/plain")
     public @ResponseBody

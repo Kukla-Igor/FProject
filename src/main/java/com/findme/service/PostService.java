@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,9 +49,23 @@ public class PostService {
         postDAO.save(post);
     }
 
-    public List getPostsById(long userId) throws InternalServerException {
+    public List getPosts(String filterStatus, long userId) throws InternalServerException, BadRequestException {
+        if (filterStatus == null)
+            return  postDAO.getAllPosts(userId);
+        Long idFilterStatus = Long.parseLong(filterStatus);
 
-        return  postDAO.getPostsById(userId);
+        if (idFilterStatus.equals((long) 0))
+            return  postDAO.getHomePagePosts(userId);
+        if (userDAO.findById(idFilterStatus) == null)
+            throw new BadRequestException("user with id = " + idFilterStatus + " not found");
+
+        return postDAO.getPostsToUser(userId,idFilterStatus);
+
+
+
+
+
+
     }
 
     public Post save(Post post) throws InternalServerException {

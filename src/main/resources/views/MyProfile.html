@@ -50,7 +50,16 @@
         </ul>
     </div>
 
-    <div class="post">
+    <div>
+        <button class="all-posts-but">All Posts</button>
+        <button class="my-posts-but">My Posts</button>
+        <form class="user-id-posts">
+            <input type="text" name="filterPostsUserId" placeholder="id" id="filterPostsUserId" >
+            <button type="submit">This user`s posts</button>
+        </form>
+    </div>
+
+    <div>
         <form class="post-form">
             <textarea name="message" cols="40" rows="3" id="text" required></textarea>
             <input type="text" name="location" placeholder="Location" id="location"/>
@@ -59,15 +68,17 @@
         </form>
     </div>
 
-    <div class="post">
+
+
+    <div >
         Posts
-        <ul th:each="posts : ${allPosts}" class="allPosts">
-            <li >
-                <p th:text="${posts.userPosted.firstName + ' ' + posts.userPosted.lastName}" ></p>
-                <p th:text="${posts.userPagePosted.firstName + ' ' + posts.userPagePosted.lastName}"></p>
-                <p th:text="${posts.message}"></p>
-                <p th:text="${posts.datePosted}"></p>
-                <p th:text="${posts.location}"></p>
+        <ul th:each="posts : ${Posts}" class="allPosts">
+            <li class="post">
+                <p th:text="'User posted: ' + ${posts.userPosted.firstName + ' ' + posts.userPosted.lastName}"></p>
+                <p th:text="'User Page posted: ' + ${posts.userPagePosted.firstName + ' ' + posts.userPagePosted.lastName}"></p>
+                <p th:text="'Message: ' + ${posts.message}"></p>
+                <p th:text="'Date: ' + ${posts.datePosted}"></p>
+                <p th:text="'Location: ' + ${posts.location}"></p>
                 <p>
                     <ul th:each="usersTagg : ${posts.usersTagget}">
                         <li>
@@ -170,6 +181,7 @@
     });
 
     $(".post-form").submit(function (e) {
+
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -185,8 +197,61 @@
         })
     })
 
+    $(".all-posts-but").click(function (e) {
+        var dataForm = {"filterPostsUserId": null};
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "postFilter",
+            data: JSON.stringify(dataForm),
+            contentType : "application/json",
+            success: function  success() {
+                alert("reload the page");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("Error");
+            }
+        });
+    });
 
+    $(".my-posts-but").click(function (e) {
+        var dataForm = {"filterPostsUserId": 0};
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "postFilter",
+            data: JSON.stringify(dataForm),
+            contentType : "application/json",
+            success: function  success() {
+                alert("reload the page");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("Error");
+            }
+        });
+    });
 
+    $(".user-id-posts").submit(function (e) {
+        var text = document.getElementById("filterPostsUserId").value;
+        var dataForm = {"filterPostsUserId": text};
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "postFilter",
+            data: JSON.stringify(dataForm),
+            contentType : "application/json",
+            success: function success() {
+                alert("reload the page");
+            },
+            error: function error(xhr) {
+                debugger;
+                alert("Error");
+            }
+        });
+
+    });
 </script>
 <style>
     .left{
@@ -204,6 +269,10 @@
         margin-top: 230px;
         margin-left: -200px;
         display: inline-grid;
+    }
+
+    .post{
+        border: chocolate solid;
     }
 </style>
 </html>

@@ -27,11 +27,10 @@
 
     <div class="post">
         <form class="post-form">
-            <textarea name="post-text" cols="40" rows="3" id="text" required></textarea>
+            <textarea name="message" cols="40" rows="3" id="text" required></textarea>
             <input type="text" name="location" placeholder="Location" id="location"/>
-            <input type="text" name="usersTagget" placeholder="UsersTagget" id="usersTagget"/>
+            <input type="text" name="usersTagg" placeholder="UsersTagget" id="usersTagget"/>
             <button type="submit">Send post</button>
-
         </form>
 
     </div>
@@ -58,13 +57,11 @@
      });
 
      $(".post-form").submit(function (e) {
-         var dataForm = {"message":$('#text').val(), "location":$('#location').val(), "usersTagget":$('#usersTagget').val()};
          e.preventDefault();
          $.ajax({
              type: "POST",
              url: "http://localhost:8080/createPost",
-             data: JSON.stringify(dataForm),
-             contentType : "application/json",
+             data: $(".post-form").serialize(),
 
              success: function success() {
                  alert("post sent");

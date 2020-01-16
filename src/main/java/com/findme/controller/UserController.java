@@ -91,11 +91,16 @@ public class UserController {
             model.addAttribute("incomingRequests", userService.getIncomingRequests(user.getId()));
             model.addAttribute("outgoingRequests", userService.getOutcomeRequests(user.getId()));
             model.addAttribute("friends", userService.getFriends(user.getId()));
-            model.addAttribute("allPosts", postService.getPostsById(user.getId()));
+            String filterStatus = null;
+            if (session.getAttribute("filterPostsUserId") != null)
+                filterStatus = session.getAttribute("filterPostsUserId").toString();
+            model.addAttribute("Posts", postService.getPosts(filterStatus, user.getId()));
 
             return "MyProfile";
-        } catch (InternalServerException e) {
+        } catch (InternalServerException | BadRequestException | NumberFormatException e) {
             return "Error";
+        } finally {
+            session.setAttribute("filterPostsUserId", null);
         }
     }
 
