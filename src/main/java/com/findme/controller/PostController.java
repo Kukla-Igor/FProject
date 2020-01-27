@@ -1,20 +1,19 @@
 package com.findme.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
-import com.findme.exception.UserNotFoundException;
 import com.findme.models.Post;
 import com.findme.models.User;
 import com.findme.service.PostService;
 import com.findme.service.UserService;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,6 +23,7 @@ import java.util.Map;
 
 @Controller
 public class PostController  {
+
     PostService postService;
     UserService userService;
 
@@ -34,20 +34,28 @@ public class PostController  {
     }
 
     @RequestMapping(value = "createPost", method = RequestMethod.POST)
-    public ResponseEntity<String> createPost(HttpSession session, Post post, String usersTagg) {
-        try {
+    public ResponseEntity<String> createPost(HttpSession session, HttpServletRequest req) {
+        try(BufferedReader br = req.getReader()) {
+            ObjectMapper mapper = new ObjectMapper();
+            Post post = new Post();
+            JsonNode list = mapper.readTree(br);
+            post.setMessage(list.get("message").asText());
+            post.setLocation(list.get("location").asText());
+            JSONArray arr = new JSONArray(list.get("usersTagg").asText());
+
             post.setUserPosted((User) session.getAttribute("user"));
             if (session.getAttribute("lustUserPage") == null)
                 post.setUserPagePosted((User) session.getAttribute("user"));
             else
                 post.setUserPagePosted((User) session.getAttribute("lustUserPage"));
-            postService.createPost(post, usersTagg);
+            postService.createPost(post, arr);
             return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (InternalServerException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (BadRequestException e){
+        } catch (BadRequestException | NumberFormatException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (UserNotFoundException e){
+        } catch (IOException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

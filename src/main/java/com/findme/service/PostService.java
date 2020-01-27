@@ -7,6 +7,7 @@ import com.findme.exception.InternalServerException;
 import com.findme.exception.UserNotFoundException;
 import com.findme.models.Post;
 import com.findme.models.User;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +31,18 @@ public class PostService {
         this.userDAO = userDAO;
     }
 
-    public void createPost(Post post, String usersTagg) throws BadRequestException, InternalServerException, UserNotFoundException {
+    public void createPost(Post post, JSONArray arr) throws BadRequestException, InternalServerException {
         if (post.getMessage().isEmpty())
             throw new BadRequestException("post message is empty");
         post.setDatePosted(new Date());
-        if (!usersTagg.isEmpty()) {
-            String[] arr = usersTagg.split(", ");
-            List<User> usersTagget = new ArrayList<>();
+        if (!arr.isEmpty()) {
+            List usersTagget = new ArrayList();
             User user;
-            for (String part : arr) {
-                user = (User) userDAO.findById(Long.parseLong(part));
+            for (Object object :  arr) {
+                long id = Long.parseLong(object.toString());
+                user = (User) userDAO.findById(id);
                 if (user == null)
-                    throw new UserNotFoundException("user with id = " + part + " not found");
+                    throw new BadRequestException("user with id = " + id + " not found");
                 usersTagget.add(user);
             }
             post.setUsersTagget(usersTagget);
