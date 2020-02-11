@@ -36,18 +36,10 @@ public class PostService {
             throw new BadRequestException("post message is empty");
         post.setDatePosted(new Date());
         if (!arr.isEmpty()) {
-            List usersTagget = new ArrayList();
-            User user;
-            for (Object object :  arr) {
-                long id = Long.parseLong(object.toString());
-                user = (User) userDAO.findById(id);
-                if (user == null)
-                    throw new BadRequestException("user with id = " + id + " not found");
-                usersTagget.add(user);
-            }
-            post.setUsersTagget(usersTagget);
+
+            post.setUsersTagget(postDAO.getListUsers(arr));
+            postDAO.save(post);
         }
-        postDAO.save(post);
     }
 
     public List getPosts(String filterStatus, long userId) throws InternalServerException, BadRequestException {

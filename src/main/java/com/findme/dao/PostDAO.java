@@ -1,7 +1,10 @@
 package com.findme.dao;
 
+import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.models.Post;
+import com.findme.models.User;
+import org.json.JSONArray;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
@@ -15,7 +18,7 @@ public class PostDAO extends GenDAO {
     private String queryGetAllPostsById = "SELECT * FROM POST WHERE USER_POSTED = :id OR  USER_PAGE_POSTED = :id ORDER BY DATE_POSTED DESC ";
     private String queryGetHomePagePostsById = "SELECT * FROM POST WHERE USER_POSTED = :id  ORDER BY DATE_POSTED DESC ";
     private String getPostsToUser = "SELECT * FROM POST WHERE USER_POSTED = :HomePageId AND USER_PAGE_POSTED = :AnotherUserId ORDER BY DATE_POSTED DESC ";
-
+    private String queryGetListUsers = "SELECT * FROM USERS WHERE ID IN ";
 
     @Override
     Class aClass() {
@@ -59,6 +62,18 @@ public class PostDAO extends GenDAO {
             return null;
         } catch (Exception e){
             throw new InternalServerException("InternalServerException: " + e.getMessage());
+        }
+    }
+
+    public List getListUsers (JSONArray arr) throws InternalServerException {
+        try {
+            String usersId = arr.toString();
+            usersId = usersId.replace("[", "(");
+            usersId = usersId.replace("]", ")");
+            Query query = entityManager.createNativeQuery(queryGetListUsers + usersId, User.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
         }
     }
 }

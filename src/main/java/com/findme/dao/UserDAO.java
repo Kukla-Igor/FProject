@@ -1,8 +1,10 @@
 package com.findme.dao;
 
+import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.models.Relationship;
 import com.findme.models.User;
+import org.json.JSONArray;
 import org.springframework.stereotype.Repository;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -15,9 +17,10 @@ public class UserDAO extends GenDAO{
     private String queryFindByPhone = "SELECT * FROM USERS WHERE PHONE = ?";
     private String queryFindByPhoneOrEMail = "SELECT * FROM USERS WHERE PHONE = ? OR EMAIL = ?";
     private String queryGetIncomingRequestsUsers = "SELECT * FROM RELATIONSHIP WHERE USER_ID_TO = ? AND STATUS = 1";
-    private String queryGetOutcomeRequestsUsers = "select * from RELATIONSHIP where USER_ID_FROM = ? and STATUS = 1";
-    private String queryGetFriendsFrom = "select * from RELATIONSHIP where USER_ID_FROM = ? and STATUS = 3";
-    private String queryGetFriendsTo = "select * from RELATIONSHIP where USER_ID_TO = ? and  STATUS = 3";
+    private String queryGetOutcomeRequestsUsers = "SELECT * FROM RELATIONSHIP WHERE USER_ID_FROM = ? AND STATUS = 1";
+    private String queryGetFriendsFrom = "SELECT * FROM RELATIONSHIP WHERE USER_ID_FROM = ? AND STATUS = 3";
+    private String queryGetFriendsTo = "SELECT * FROM RELATIONSHIP WHERE USER_ID_TO = ? AND  STATUS = 3";
+
 
     public User findByPhone(String phone) throws InternalServerException{
         try {
