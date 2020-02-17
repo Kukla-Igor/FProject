@@ -19,6 +19,9 @@ public class PostDAO extends GenDAO {
     private String queryGetHomePagePostsById = "SELECT * FROM POST WHERE USER_POSTED = :id  ORDER BY DATE_POSTED DESC ";
     private String getPostsToUser = "SELECT * FROM POST WHERE USER_POSTED = :HomePageId AND USER_PAGE_POSTED = :AnotherUserId ORDER BY DATE_POSTED DESC ";
     private String queryGetListUsers = "SELECT * FROM USERS WHERE ID IN ";
+   // private String queryGetNews = "SELECT * FROM(SELECT ID, MESSAGE, DATE_POSTED, USER_POSTED, LOCATION, USER_PAGE_POSTED, row_number() over (order by DATE_POSTED DESC) rn FROM POST WHERE  USER_POSTED IN :id OR USER_PAGE_POSTED IN :id ORDER BY DATE_POSTED DESC) WHERE rn <= 10 ";
+    private String queryGetNews = "SELECT * FROM(SELECT ID, MESSAGE, DATE_POSTED, USER_POSTED, LOCATION, USER_PAGE_POSTED, row_number() over (order by DATE_POSTED DESC) rn FROM POST WHERE  USER_POSTED IN :id OR USER_PAGE_POSTED IN :id ORDER BY DATE_POSTED DESC) WHERE rn > 5 * (:k - 1) AND rn <= 5 * :k ";
+
 
     @Override
     Class aClass() {
@@ -76,4 +79,21 @@ public class PostDAO extends GenDAO {
             throw new InternalServerException(e.getMessage());
         }
     }
+
+    public List getNews( List<Long> idUsers, int k) throws InternalServerException {
+        try {
+            Query query;
+            query = entityManager.createNativeQuery(queryGetNews,  Post.class);
+            query.setParameter("id", idUsers);
+            query.setParameter("k", k);
+            List<Post> posts =  query.getResultList();
+            return posts;
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e){
+            throw new InternalServerException("InternalServerException: " + e.getMessage());
+        }
+    }
+
+
 }

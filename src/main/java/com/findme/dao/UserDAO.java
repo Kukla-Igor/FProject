@@ -1,10 +1,8 @@
 package com.findme.dao;
 
-import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.models.Relationship;
 import com.findme.models.User;
-import org.json.JSONArray;
 import org.springframework.stereotype.Repository;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -90,7 +91,9 @@ public class UserController {
             model.addAttribute("user", user);
             model.addAttribute("incomingRequests", userService.getIncomingRequests(user.getId()));
             model.addAttribute("outgoingRequests", userService.getOutcomeRequests(user.getId()));
-            model.addAttribute("friends", userService.getFriends(user.getId()));
+            List friends = userService.getFriends(user.getId());
+            session.setAttribute("friends", friends);
+            model.addAttribute("friends", friends);
             String filterStatus = null;
             if (session.getAttribute("filterPostsUserId") != null)
                 filterStatus = session.getAttribute("filterPostsUserId").toString();

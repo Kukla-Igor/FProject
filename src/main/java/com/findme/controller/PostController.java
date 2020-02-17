@@ -13,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -116,6 +118,42 @@ public class PostController  {
             return null;
         }
     }
+
+
+    @RequestMapping (value = "feed", method = RequestMethod.GET)
+    public String feed(Model model, HttpSession session, String nextPage) {
+        try {
+            int k = 1;
+            if (nextPage != null)
+                k = 1 + (int) session.getAttribute("k");
+
+            session.setAttribute("k", k);
+
+            List friends = (List) session.getAttribute("friends");
+
+            model.addAttribute("Posts", postService.getNews(friends, k));
+
+            return "feed";
+        } catch (InternalServerException | BadRequestException | NumberFormatException e) {
+            return "Error";
+        }
+    }
+
+//    @RequestMapping (value = "nextPage", method = RequestMethod.GET)
+//    public String feedNextPage(Model model, HttpSession session) {
+//        try {
+//            int k = 1 + (int) session.getAttribute("k");
+//            session.setAttribute("k", k);
+//            List friends = (List) session.getAttribute("friends");
+//
+//            model.addAttribute("Posts", postService.getNews(friends, k));
+//
+//            return "feed";
+//        } catch (InternalServerException | BadRequestException | NumberFormatException e) {
+//            return "Error";
+//        }
+//    }
+
 
     private Post toJavaObject(BufferedReader br) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

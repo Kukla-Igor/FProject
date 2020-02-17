@@ -54,9 +54,20 @@ public class PostService {
 
         return postDAO.getPostsToUser(userId,idFilterStatus);
 
+    }
 
+    public List getNews(List<User> friends, int k) throws InternalServerException, BadRequestException {
 
+        if (friends.isEmpty())
+            throw new InternalServerException("Add somebody to friends");
 
+        List<Long> idFriends = new ArrayList<>();
+
+        for (User friend: friends) {
+            idFriends.add(friend.getId());
+        }
+
+        return postDAO.getNews(idFriends, k);
 
 
     }
