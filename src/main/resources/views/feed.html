@@ -32,17 +32,16 @@
     <p><a href="feed.html" class="next-page-href">Next Page</a></p>
 </div>
 </body>
-<script>
+<script th:inline="javascript">
 
     $(".next-page-href").click(function (e) {
-        // var data = {"nextPage": "true"};
+
         e.preventDefault();
         $.ajax({
             type: "GET",
             url: "feed",
             data: {nextPage: "true"},
-            // contentType : "application/json",
-            success: function success(html) {
+            success: function success() {
 
             },
             error: function error(xhr) {
@@ -51,86 +50,6 @@
         })
     })
 
-
-
-
-//    $(".post-form").submit(function (e) {
-//        var text = document.getElementById("text").value;
-//        var location = document.getElementById("location").value;
-//        var location = document.getElementById("location").value;
-//        var usersTagget = document.getElementById("usersTagget").value;
-//        var dataForm = {"message": text, "location": location, "usersTagg": "[" + usersTagget + "]"};
-//        e.preventDefault();
-//        $.ajax({
-//            type: "POST",
-//            url: "createPost",
-//            data: JSON.stringify(dataForm),
-//            contentType : "application/json",
-//            success: function success() {
-//                alert("post sent");
-//            },
-//            error: function error(xhr) {
-//                debugger;
-//                alert("post not sent");
-//            }
-//        })
-//    })
-//
-//    $(".all-posts-but").click(function (e) {
-//        var dataForm = {"filterPostsUserId": null};
-//        e.preventDefault();
-//        $.ajax({
-//            type: "POST",
-//            url: "postFilter",
-//            data: JSON.stringify(dataForm),
-//            contentType : "application/json",
-//            success: function  success() {
-//                alert("reload the page");
-//            },
-//            error: function error(xhr) {
-//                debugger;
-//                alert("Error");
-//            }
-//        });
-//    });
-//
-//    $(".my-posts-but").click(function (e) {
-//        var dataForm = {"filterPostsUserId": 0};
-//        e.preventDefault();
-//        $.ajax({
-//            type: "POST",
-//            url: "postFilter",
-//            data: JSON.stringify(dataForm),
-//            contentType : "application/json",
-//            success: function  success() {
-//                alert("reload the page");
-//            },
-//            error: function error(xhr) {
-//                debugger;
-//                alert("Error");
-//            }
-//        });
-//    });
-//
-//    $(".user-id-posts").submit(function (e) {
-//        var text = document.getElementById("filterPostsUserId").value;
-//        var dataForm = {"filterPostsUserId": text};
-//        e.preventDefault();
-//        $.ajax({
-//            type: "POST",
-//            url: "postFilter",
-//            data: JSON.stringify(dataForm),
-//            contentType : "application/json",
-//            success: function success() {
-//                alert("reload the page");
-//            },
-//            error: function error(xhr) {
-//                debugger;
-//                alert("Error");
-//            }
-//        });
-//
-//    });
 </script>
 <style>
     .post{

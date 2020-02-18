@@ -121,7 +121,7 @@ public class PostController  {
 
 
     @RequestMapping (value = "feed", method = RequestMethod.GET)
-    public String feed(Model model, HttpSession session, String nextPage) {
+    public String feed(Model model, HttpSession session,  String nextPage) {
         try {
             int k = 1;
             if (nextPage != null)
@@ -138,21 +138,6 @@ public class PostController  {
             return "Error";
         }
     }
-
-//    @RequestMapping (value = "nextPage", method = RequestMethod.GET)
-//    public String feedNextPage(Model model, HttpSession session) {
-//        try {
-//            int k = 1 + (int) session.getAttribute("k");
-//            session.setAttribute("k", k);
-//            List friends = (List) session.getAttribute("friends");
-//
-//            model.addAttribute("Posts", postService.getNews(friends, k));
-//
-//            return "feed";
-//        } catch (InternalServerException | BadRequestException | NumberFormatException e) {
-//            return "Error";
-//        }
-//    }
 
 
     private Post toJavaObject(BufferedReader br) throws IOException {

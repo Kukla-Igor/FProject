@@ -1,15 +1,12 @@
 package com.findme.dao;
 
-import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
 import com.findme.models.Post;
 import com.findme.models.User;
 import org.json.JSONArray;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -19,7 +16,6 @@ public class PostDAO extends GenDAO {
     private String queryGetHomePagePostsById = "SELECT * FROM POST WHERE USER_POSTED = :id  ORDER BY DATE_POSTED DESC ";
     private String getPostsToUser = "SELECT * FROM POST WHERE USER_POSTED = :HomePageId AND USER_PAGE_POSTED = :AnotherUserId ORDER BY DATE_POSTED DESC ";
     private String queryGetListUsers = "SELECT * FROM USERS WHERE ID IN ";
-   // private String queryGetNews = "SELECT * FROM(SELECT ID, MESSAGE, DATE_POSTED, USER_POSTED, LOCATION, USER_PAGE_POSTED, row_number() over (order by DATE_POSTED DESC) rn FROM POST WHERE  USER_POSTED IN :id OR USER_PAGE_POSTED IN :id ORDER BY DATE_POSTED DESC) WHERE rn <= 10 ";
     private String queryGetNews = "SELECT * FROM(SELECT ID, MESSAGE, DATE_POSTED, USER_POSTED, LOCATION, USER_PAGE_POSTED, row_number() over (order by DATE_POSTED DESC) rn FROM POST WHERE  USER_POSTED IN :id OR USER_PAGE_POSTED IN :id ORDER BY DATE_POSTED DESC) WHERE rn > 5 * (:k - 1) AND rn <= 5 * :k ";
 
 
