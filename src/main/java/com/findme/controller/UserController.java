@@ -7,6 +7,7 @@ import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.PostService;
 import com.findme.service.UserService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ import java.util.Map;
 public class UserController {
     UserService userService;
     PostService postService;
+
+    private static final Logger log = Logger.getLogger(UserController.class);
 
     @Autowired
     public UserController(UserService userService, PostService postService) {
@@ -72,12 +75,16 @@ public class UserController {
                 return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
             User user = userService.loginUser(params.get("phone"), params.get("password"));
             session.setAttribute("user", user);
+            log.info("user is logged");
             return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (UserNotFoundException e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (InternalServerException e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (BadRequestException e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -85,8 +92,10 @@ public class UserController {
     @RequestMapping(value = "myProfile", method = RequestMethod.GET)
     public String MyProfile(Model model, HttpSession session) {
         try {
-            if (session.getAttribute("user") == null)
+            if (session.getAttribute("user") == null){
+                log.error("Error");
                 return "Error";
+            }
             User user = (User) session.getAttribute("user");
             model.addAttribute("user", user);
             model.addAttribute("incomingRequests", userService.getIncomingRequests(user.getId()));
@@ -101,6 +110,7 @@ public class UserController {
 
             return "MyProfile";
         } catch (InternalServerException | BadRequestException | NumberFormatException e) {
+            log.error(e.getMessage());
             return "Error";
         } finally {
             session.setAttribute("filterPostsUserId", null);
@@ -113,6 +123,7 @@ public class UserController {
         if (session.getAttribute("user") == null)
             return new ResponseEntity<>("user is still online", HttpStatus.INTERNAL_SERVER_ERROR);
         session.setAttribute("user", null);
+        log.info("user is loggouted");
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 

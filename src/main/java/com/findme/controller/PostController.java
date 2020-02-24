@@ -22,12 +22,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 @Controller
 public class PostController  {
 
     PostService postService;
     UserService userService;
+
+    private static final Logger log = Logger.getLogger(PostController.class);
 
     @Autowired
     public PostController(PostService postService, UserService userService) {
@@ -51,13 +54,16 @@ public class PostController  {
             else
                 post.setUserPagePosted((User) session.getAttribute("lustUserPage"));
             postService.createPost(post, arr);
+            log.info("post create");
             return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (InternalServerException e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (BadRequestException | NumberFormatException e){
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -135,6 +141,7 @@ public class PostController  {
 
             return "feed";
         } catch (InternalServerException | BadRequestException | NumberFormatException e) {
+            log.error(e.getMessage());
             return "Error";
         }
     }
