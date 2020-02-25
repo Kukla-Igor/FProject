@@ -22,7 +22,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 @Controller
 public class PostController  {
@@ -30,7 +32,7 @@ public class PostController  {
     PostService postService;
     UserService userService;
 
-    private static final Logger log = Logger.getLogger(PostController.class);
+    private static final Logger log = LogManager.getLogger(PostController.class);
 
     @Autowired
     public PostController(PostService postService, UserService userService) {

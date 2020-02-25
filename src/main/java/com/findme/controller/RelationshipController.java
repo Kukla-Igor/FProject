@@ -2,8 +2,10 @@ package com.findme.controller;
 
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
+import com.findme.models.User;
 import com.findme.service.RelationshipService;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import java.util.Map;
 @Controller
 public class RelationshipController {
     RelationshipService relationshipService;
-    private static final Logger log = Logger.getLogger(PostController.class);
+    private static final Logger log = LogManager.getLogger(RelationshipController.class);
 
 
     @Autowired

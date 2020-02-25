@@ -7,7 +7,8 @@ import com.findme.exception.UserNotFoundException;
 import com.findme.models.User;
 import com.findme.service.PostService;
 import com.findme.service.UserService;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class UserController {
     UserService userService;
     PostService postService;
 
-    private static final Logger log = Logger.getLogger(UserController.class);
+    private static final Logger log = LogManager.getLogger(UserController.class);
 
     @Autowired
     public UserController(UserService userService, PostService postService) {
