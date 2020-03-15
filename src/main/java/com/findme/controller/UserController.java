@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
@@ -37,63 +38,41 @@ public class UserController {
 
 
     @RequestMapping(path = "/user/{userId}", method = RequestMethod.GET)
-    public String profile(Model model, @PathVariable String userId, HttpSession session) {
-        try {
-            Long id = toLong(userId);
-            User userNow = (User) session.getAttribute("user");
-            if (id.equals(userNow.getId()))
-                return MyProfile(model, session);
-            User user = userService.profile(id);
-            model.addAttribute("user", user);
-            session.setAttribute("lustUserPage", user);
-            return "profile";
-        } catch (UserNotFoundException e) {
-            return "profileNotFound";
-        } catch (BadRequestException | InternalServerException e) {
-            model.addAttribute("error", e.getMessage());
-            return "Error";
-        }
+    public String profile(Model model, @PathVariable String userId, HttpSession session) throws BadRequestException, UserNotFoundException, InternalServerException {
+
+        Long id = toLong(userId);
+        User userNow = (User) session.getAttribute("user");
+        if (id.equals(userNow.getId()))
+            return MyProfile(model, session);
+        User user = userService.profile(id);
+        model.addAttribute("user", user);
+        session.setAttribute("lustUserPage", user);
+        return "profile";
     }
 
     @RequestMapping(value = "user-registration", method = RequestMethod.POST)
-    public ResponseEntity<String> registerUser(User user) {
-        try {
-            userService.save(user);
-            return new ResponseEntity<>("ok", HttpStatus.OK);
-        } catch (BadRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (InternalServerException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> registerUser(User user) throws BadRequestException, InternalServerException {
+        userService.save(user);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody Map<String, String> params) {
-        try {
-            if(params.get("password").isEmpty() || (params.get("phone").isEmpty()))
-                return new ResponseEntity<>("empty field", HttpStatus.BAD_REQUEST);
-            if (session.getAttribute("user") != null)
-                return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
-            User user = userService.loginUser(params.get("phone"), params.get("password"));
-            session.setAttribute("user", user);
-            log.info("user is logged");
-            return new ResponseEntity<>("OK", HttpStatus.OK);
-        } catch (UserNotFoundException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (InternalServerException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (BadRequestException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody Map<String, String> params) throws UserNotFoundException, BadRequestException, InternalServerException {
+        if (params.get("password").isEmpty() || (params.get("phone").isEmpty()))
+            return new ResponseEntity<>("empty field", HttpStatus.BAD_REQUEST);
+        if (session.getAttribute("user") != null)
+            return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
+        User user = userService.loginUser(params.get("phone"), params.get("password"));
+        session.setAttribute("user", user);
+        log.info("user is logged");
+        return new ResponseEntity<>("OK", HttpStatus.OK);
+
     }
 
     @RequestMapping(value = "myProfile", method = RequestMethod.GET)
-    public String MyProfile(Model model, HttpSession session) {
+    public String MyProfile(Model model, HttpSession session) throws BadRequestException, UserNotFoundException, InternalServerException {
         try {
-            if (session.getAttribute("user") == null){
+            if (session.getAttribute("user") == null) {
                 log.error("Error");
                 return "Error";
             }
@@ -110,9 +89,6 @@ public class UserController {
             model.addAttribute("Posts", postService.getPosts(filterStatus, user.getId()));
 
             return "MyProfile";
-        } catch (InternalServerException | BadRequestException | NumberFormatException e) {
-            log.error(e.getMessage());
-            return "Error";
         } finally {
             session.setAttribute("filterPostsUserId", null);
         }
@@ -139,7 +115,6 @@ public class UserController {
             System.out.println(e.getMessage());
             return null;
         }
-
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/findUser", produces = "text/plain")
@@ -191,6 +166,4 @@ public class UserController {
             throw new BadRequestException("Bad request");
         }
     }
-
-
 }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,12 +23,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 @Controller
-public class PostController  {
+public class PostController {
 
     PostService postService;
     UserService userService;
@@ -41,39 +43,31 @@ public class PostController  {
     }
 
     @RequestMapping(value = "createPost", method = RequestMethod.POST)
-    public ResponseEntity<String> createPost(HttpSession session, HttpServletRequest req) {
-        try(BufferedReader br = req.getReader()) {
-            ObjectMapper mapper = new ObjectMapper();
-            Post post = new Post();
-            JsonNode list = mapper.readTree(br);
-            post.setMessage(list.get("message").asText());
-            post.setLocation(list.get("location").asText());
-            JSONArray arr = new JSONArray(list.get("usersTagg").asText());
+    public ResponseEntity<String> createPost(HttpSession session, HttpServletRequest req) throws InternalServerException, BadRequestException, IOException {
+        {
+            try (BufferedReader br = req.getReader()) {
+                ObjectMapper mapper = new ObjectMapper();
+                Post post = new Post();
+                JsonNode list = mapper.readTree(br);
+                post.setMessage(list.get("message").asText());
+                post.setLocation(list.get("location").asText());
+                JSONArray arr = new JSONArray(list.get("usersTagg").asText());
 
-            post.setUserPosted((User) session.getAttribute("user"));
-            if (session.getAttribute("lustUserPage") == null)
-                post.setUserPagePosted((User) session.getAttribute("user"));
-            else
-                post.setUserPagePosted((User) session.getAttribute("lustUserPage"));
-            postService.createPost(post, arr);
-            log.info("post create");
-            return new ResponseEntity<>("OK", HttpStatus.OK);
-        } catch (InternalServerException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (BadRequestException | NumberFormatException e){
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+                post.setUserPosted((User) session.getAttribute("user"));
+                if (session.getAttribute("lustUserPage") == null)
+                    post.setUserPagePosted((User) session.getAttribute("user"));
+                else
+                    post.setUserPagePosted((User) session.getAttribute("lustUserPage"));
+                postService.createPost(post, arr);
+                log.info("post create");
+                return new ResponseEntity<>("OK", HttpStatus.OK);
+            }
         }
     }
 
 
     @RequestMapping(value = "postFilter", method = RequestMethod.POST)
     public ResponseEntity<String> postFilter(HttpSession session, @RequestBody Map<String, String> params) {
-
         session.setAttribute("filterPostsUserId", (params.get("filterPostsUserId")));
         return new ResponseEntity<>("OK", HttpStatus.OK);
 
@@ -86,19 +80,17 @@ public class PostController  {
             Post post = toJavaObject(br);
             return postService.save(post);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/findPost", produces = "text/plain")
     public @ResponseBody
-    Post doGet(HttpServletRequest req)  {
+    Post doGet(HttpServletRequest req) {
         try (BufferedReader br = req.getReader()) {
             Post post = toJavaObject(br);
             return postService.findById(post);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -110,7 +102,6 @@ public class PostController  {
             Post post = toJavaObject(br);
             return postService.update(post);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -122,14 +113,13 @@ public class PostController  {
             Post post = toJavaObject(br);
             return postService.delete(post);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }
 
 
-    @RequestMapping (value = "feed", method = RequestMethod.GET)
-    public String feed(Model model, HttpSession session,  String nextPage) {
+    @RequestMapping(value = "feed", method = RequestMethod.GET)
+    public String feed(Model model, HttpSession session, String nextPage) {
         try {
             int k = 1;
             if (nextPage != null)

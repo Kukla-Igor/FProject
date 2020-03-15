@@ -2,7 +2,6 @@ package com.findme.controller;
 
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
-import com.findme.models.User;
 import com.findme.service.RelationshipService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -29,33 +29,18 @@ public class RelationshipController {
 
 
     @RequestMapping(value = "add-relationship", method = RequestMethod.POST)
-    public ResponseEntity<String> addRelationship(HttpSession session) {
-        try {
-            relationshipService.addRelationship(session);
-            log.error("relationship is added");
-            return new ResponseEntity<>("Ok", HttpStatus.OK);
-        } catch (BadRequestException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (InternalServerException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> addRelationship(HttpSession session) throws InternalServerException, BadRequestException {
+        relationshipService.addRelationship(session);
+        log.error("relationship is added");
+        return new ResponseEntity<>("Ok", HttpStatus.OK);
     }
 
     @RequestMapping(value = "update-relationship", method = RequestMethod.POST)
-    public ResponseEntity<String> updateRelationship(HttpSession session, @RequestBody Map<String, String> params) {
-        try {
-            relationshipService.updateRelationship(session, params);
-            log.info("relationship is updated");
-            return new ResponseEntity<>("Ok", HttpStatus.OK);
-        } catch (InternalServerException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (BadRequestException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> updateRelationship(HttpSession session, @RequestBody Map<String, String> params) throws InternalServerException, BadRequestException {
+
+        relationshipService.updateRelationship(session, params);
+        log.info("relationship is updated");
+        return new ResponseEntity<>("Ok", HttpStatus.OK);
     }
 
 }
