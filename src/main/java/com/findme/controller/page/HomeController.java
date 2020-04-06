@@ -1,4 +1,4 @@
-package com.findme.controller;
+package com.findme.controller.page;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

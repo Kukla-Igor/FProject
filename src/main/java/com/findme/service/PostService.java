@@ -56,7 +56,7 @@ public class PostService {
 
     }
 
-    public List getNews(List<User> friends, int k) throws InternalServerException, BadRequestException {
+    public List getNews(List<User> friends, int numNextPage) throws InternalServerException {
 
         if (friends.isEmpty())
             throw new InternalServerException("Add somebody to friends");
@@ -67,7 +67,7 @@ public class PostService {
             idFriends.add(friend.getId());
         }
 
-        return postDAO.getNews(idFriends, k);
+        return postDAO.getNews(idFriends, numNextPage);
 
 
     }

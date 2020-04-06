@@ -1,4 +1,4 @@
-package com.findme.controller;
+package com.findme.controller.status;
 
 import com.findme.exception.BadRequestException;
 import com.findme.exception.InternalServerException;
@@ -17,13 +17,13 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
-public class RelationshipController {
+public class RelationshipControllerStatus {
     RelationshipService relationshipService;
-    private static final Logger log = LogManager.getLogger(RelationshipController.class);
+    private static final Logger log = LogManager.getLogger(RelationshipControllerStatus.class);
 
 
     @Autowired
-    public RelationshipController(RelationshipService relationshipService) {
+    public RelationshipControllerStatus(RelationshipService relationshipService) {
         this.relationshipService = relationshipService;
     }
 

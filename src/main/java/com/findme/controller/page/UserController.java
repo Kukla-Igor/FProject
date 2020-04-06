@@ -1,4 +1,4 @@
-package com.findme.controller;
+package com.findme.controller.page;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.findme.exception.BadRequestException;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class UserController {
@@ -50,27 +49,9 @@ public class UserController {
         return "profile";
     }
 
-    @RequestMapping(value = "user-registration", method = RequestMethod.POST)
-    public ResponseEntity<String> registerUser(User user) throws BadRequestException, InternalServerException {
-        userService.save(user);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ResponseEntity<String> loginUser(HttpSession session, @RequestBody Map<String, String> params) throws UserNotFoundException, BadRequestException, InternalServerException {
-        if (params.get("password").isEmpty() || (params.get("phone").isEmpty()))
-            return new ResponseEntity<>("empty field", HttpStatus.BAD_REQUEST);
-        if (session.getAttribute("user") != null)
-            return new ResponseEntity<>("the user is already logged in", HttpStatus.BAD_REQUEST);
-        User user = userService.loginUser(params.get("phone"), params.get("password"));
-        session.setAttribute("user", user);
-        log.info("user is logged");
-        return new ResponseEntity<>("OK", HttpStatus.OK);
-
-    }
 
     @RequestMapping(value = "myProfile", method = RequestMethod.GET)
-    public String MyProfile(Model model, HttpSession session) throws BadRequestException, UserNotFoundException, InternalServerException {
+    public String MyProfile(Model model, HttpSession session) throws BadRequestException, InternalServerException {
         try {
             if (session.getAttribute("user") == null) {
                 log.error("Error");
@@ -107,49 +88,37 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/saveUser", produces = "text/plain")
     public @ResponseBody
-    User doPost(HttpServletRequest req) throws InternalServerException, BadRequestException {
+    User doPost(HttpServletRequest req) throws InternalServerException, BadRequestException, IOException {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.save(user);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
         }
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/findUser", produces = "text/plain")
     public @ResponseBody
-    User doGet(HttpServletRequest req) {
+    User doGet(HttpServletRequest req) throws InternalServerException, IOException {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.findById(user.getId());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
         }
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/updateUser", produces = "text/plain")
     public @ResponseBody
-    User doPut(HttpServletRequest req) {
+    User doPut(HttpServletRequest req) throws IOException{
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.update(user);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
         }
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteUser", produces = "text/plain")
     public @ResponseBody
-    User doDelete(HttpServletRequest req) {
+    User doDelete(HttpServletRequest req)  throws IOException {
         try (BufferedReader br = req.getReader()) {
             User user = toJavaObject(br);
             return userService.delete(user);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
         }
     }
 
@@ -166,4 +135,5 @@ public class UserController {
             throw new BadRequestException("Bad request");
         }
     }
+
 }
